@@ -1,0 +1,36 @@
+{
+  "name": "generator-zalamo",
+  "version": "0.0.0",
+  "description": "Generate zalamo specific components",
+  "homepage": "",
+  "author": {
+    "name": "Daniel Busłowicz",
+    "email": "draccoz@gmail.com",
+    "url": ""
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/index.js",
+  "keywords": [
+    "",
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^1.0.0",
+    "chalk": "^1.1.3",
+    "yosay": "^1.2.1"
+  },
+  "eslintConfig": {
+    "extends": "xo-space",
+    "env": {
+      "mocha": true
+    }
+  },
+  "repository": "Draccoz/generator-zalamo",
+  "scripts": {
+    "prepublish": "gulp prepublish",
+    "test": "gulp"
+  },
+  "private": true
+}

@@ -1,18 +1,22 @@
 /* 3rd party modules */
+import { Subject } from 'rxjs';
 
 /* C&C */
 import { mockApollo } from '../common/mocks';
 
 /* <%= Name %> module pieces */
 import { <%= Name %>Actions } from './<%= name %>.actions';
-import { <%= name %>Reducer } from './<%= name %>.reducer';<% if (samples) { %>
+import { <%= name %>Reducer } from './<%= name %>.reducer';
 
-// export const mock<%= Name %>Actions = () => {
-//   const s = new Subject();
-//   return <any>{
-//     fetch<%= Name %>: () => s,
-//   };
-// };<% } %>
+/**
+ * Function to generate <%= Name %>Actions mocking object
+ */
+export const mock<%= Name %>Actions = () => {
+  const s = new Subject();
+  return <any>{
+    // fetch<%= Name %>: () => s,
+  };
+};
 
 describe('<%= Name %>', () => {
   describe('Actions', () => {

@@ -1,6 +1,6 @@
 'use strict';
 const Generator = require('yeoman-generator');
-//const chalk = require('chalk');
+const chalk = require('chalk');
 const yosay = require('yosay');
 const { Q } = require('../helpers');
 
@@ -8,7 +8,7 @@ module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
 
-    this.argument('moduleName', { type: String, required: true });
+    this.argument('ModuleName', { type: String, required: true });
   }
 
   prompting() {
@@ -33,7 +33,7 @@ module.exports = class extends Generator {
   }
 
   _cpTplList(files) {
-    let Name = this.options.moduleName;
+    let Name = this.options.ModuleName;
     let name = Name.toLowerCase();
     let context = Object.assign({
       appPrefix: 'app',
@@ -48,9 +48,5 @@ module.exports = class extends Generator {
         context
       );
     })
-  }
-
-  install() {
-//    this.installDependencies();
   }
 };

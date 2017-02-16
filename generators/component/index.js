@@ -38,7 +38,7 @@ module.exports = class extends Generator {
   }
 
   _cpTplList(files) {
-    let {Name, ModuleName: Module} = this.options;
+    let { Name, ModuleName: Module } = this.options;
     let name = Name.toLowerCase();
     let module = Module.toLowerCase();
 
@@ -67,20 +67,27 @@ module.exports = class extends Generator {
           src, newSrc: src.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}Component$1`)
         };
       }, '');
-    moduleSrc = moduleSrc.replace(
-      `declarations: [${declarations.src}]`,
-      `declarations: [${declarations.newSrc}]`
-    );
 
-    let lastImport = moduleSrc.match(/import \{[ \w_,]+} from '[^']+';/g).slice(-1)[0];
+    let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
+    let imports = moduleSrc.match(new RegExp(importPattern, 'g'));
 
-    moduleSrc = moduleSrc.replace(
-      lastImport,
-      [
+    let targetImports = imports.filter(item => item.includes(`from './components/`));
+    let newImport = `import { ${Module}${Name}Component } from './components/${name}.component';`;
+    let lastImport = (targetImports.length > 0 ? targetImports : imports).slice(-1)[ 0 ];
+
+    moduleSrc = moduleSrc
+      .replace(
+        `declarations: [${declarations.src}]`,
+        `declarations: [${declarations.newSrc}]`
+      )
+      .replace(
         lastImport,
-        `import { ${Module}${Name}Component } from './components/${name}.component';`
-      ].join('\n')
-    );
+        [
+          lastImport,
+          ...(targetImports.length === 0 ? [ '', '/* Components */' ] : []),
+          newImport
+        ].join('\n')
+      );
 
     this.fs.write(modulePath, moduleSrc);
   }

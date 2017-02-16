@@ -1,33 +1,26 @@
 /* 3rd party modules */
-import { Component, Input } from '@angular/core';
-import { Subject } from 'rxjs';
 
 /* C&C */
 import { mockApollo } from '../common/mocks';
 
-/* <%= moduleName %> module pieces */
-import { <%= moduleName %>Actions } from './<%= moduleNameLowerCase %>.actions';
-import { <%= moduleNameLowerCase %>Reducer } from './<%= moduleNameLowerCase %>.reducer';
+/* <%= Name %> module pieces */
+import { <%= Name %>Actions } from './<%= name %>.actions';
+import { <%= name %>Reducer } from './<%= name %>.reducer';<% if (samples) { %>
 
-// export const mock<%= moduleName %>Actions = () => {
+// export const mock<%= Name %>Actions = () => {
 //   const s = new Subject();
 //   return <any>{
-//     fetch<%= moduleName %>: () => s,
+//     fetch<%= Name %>: () => s,
 //   };
-// };
+// };<% } %>
 
-// @Component({ selector: '<%= appPrefix %>-<%= moduleNameLowerCase %>', template: '' })
-// export class <%= moduleName %>StubComponent {
-//   @Input() <%= moduleName %>;
-// }
-
-describe('<%= moduleName %>', () => {
+describe('<%= Name %>', () => {
   describe('Actions', () => {
     const apollo = mockApollo();
-    let actions: <%= moduleName %>Actions;
+    let actions: <%= Name %>Actions;
 
     beforeEach(() => {
-      actions = new <%= moduleName %>Actions(apollo);
+      actions = new <%= Name %>Actions(apollo);
     });
 
     // TODO

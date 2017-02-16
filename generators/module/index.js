@@ -2,14 +2,7 @@
 const Generator = require('yeoman-generator');
 //const chalk = require('chalk');
 const yosay = require('yosay');
-
-const I = {
-  input: (name, message, def) => ({ type: 'input', name, message, default: def }),
-  confirm: (name, message, def) => ({ type: 'confirm', name, message, default: def }),
-  checkbox: (name, message, choices) => ({ type: 'checkbox', name, message, choices }),
-  list: (name, message, choices) => ({ type: 'list', name, message, choices }),
-  option: (value, name = value, short = name) => ({ value, name, short })
-};
+const { Q } = require('../helpers');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -18,16 +11,16 @@ module.exports = class extends Generator {
     this.argument('moduleName', { type: String, required: true });
   }
 
-//  prompting() {
-//    // Have Yeoman greet the user.
-//    this.log(yosay('test'));
-//
-//    const prompts = [];
-//
-//    return this
-//      .prompt(prompts)
-//      .then(props => this.props = props);
-//  }
+  prompting() {
+    const prompts = [
+      Q.input('description', 'Describe a module', 'TODO: Write a documentation'),
+      Q.confirm('samples', 'Insert sample code?', false)
+    ];
+
+    return this
+      .prompt(prompts)
+      .then(props => this.props = props);
+  }
 
   writing() {
     this._cpTplList([
@@ -40,18 +33,18 @@ module.exports = class extends Generator {
   }
 
   _cpTplList(files) {
-    let moduleName = this.options.moduleName;
-    let moduleNameLowerCase = moduleName.toLowerCase();
-    let context = {
+    let Name = this.options.moduleName;
+    let name = Name.toLowerCase();
+    let context = Object.assign({
       appPrefix: 'app',
-      moduleName, moduleNameLowerCase
-    };
+      Name, name
+    }, this.props);
     files.forEach(file => {
-      let fileName = file === 'index.ts' ? file : `${moduleNameLowerCase}.${file}`;
+      let fileName = file === 'index.ts' ? file : `${name}.${file}`;
 
       this.fs.copyTpl(
         this.templatePath(`${file}.tpl`),
-        this.destinationPath(`src/app/${moduleNameLowerCase}/${fileName}`),
+        this.destinationPath(`src/app/${name}/${fileName}`),
         context
       );
     })

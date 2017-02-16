@@ -7,19 +7,22 @@ import { NgReduxModule } from '@angular-redux/store';
 import { AppCommonModule } from '../common';
 import { ProvidedApolloModule } from '../core/store';
 
-/* <%= moduleName %> module pieces */
-import { <%= moduleName %>Actions, <%= moduleName %>FromRoute } from './<%= moduleNameLowerCase %>.actions';
-import { <%= moduleName %>RoutingModule } from './<%= moduleNameLowerCase %>.router';
+/* <%= Name %> module pieces */
+import { <%= Name %>Actions<% if (samples) { %>/*, <%= Name %>FromRoute*/<% } %> } from './<%= name %>.actions';
+import { <%= Name %>RoutingModule } from './<%= name %>.router';
 
 /* Views */
 
 /* Components */
 
+/**
+ * <%= description %>
+ */
 @NgModule({
   imports: [
     CommonModule,
     AppCommonModule,
-    <%= moduleName %>RoutingModule,
+    <%= Name %>RoutingModule,
     NgReduxModule,
     ProvidedApolloModule
   ],
@@ -27,16 +30,16 @@ import { <%= moduleName %>RoutingModule } from './<%= moduleNameLowerCase %>.rou
     // Views & Components placeholder
   ],
   providers: [
-    <%= moduleName %>Actions,
-    <%= moduleName %>FromRoute
+    <%= Name %>Actions<% if (samples) { %>//,
+    // <%= Name %>FromRoute<% } %>
   ],
   exports: [
-    <%= moduleName %>RoutingModule,
+    <%= Name %>RoutingModule,
     // Views & Components placeholder
   ]
 })
-export class <%= moduleName %>Module {}
+export class <%= Name %>Module {}
 
-export * from './<%= moduleNameLowerCase %>.actions';
-export * from './<%= moduleNameLowerCase %>.reducer';
-export * from './<%= moduleNameLowerCase %>.router';
+export * from './<%= name %>.actions';
+export * from './<%= name %>.reducer';
+export * from './<%= name %>.router';

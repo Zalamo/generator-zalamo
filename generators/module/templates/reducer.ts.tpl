@@ -1,40 +1,43 @@
 /* 3rd party modules */
-import { ApolloQueryResult } from 'apollo-client';
 import { ApolloAction } from 'apollo-client/actions';
-import * as _ from 'lodash';
 
 /* C&C */
-import { apolloActionName } from '../common';
+import { apolloOperationName } from '../common';
 
-/* Types */
-// import {  } from '../../../types';
+/* Types */<% if (samples) { %>
+// import {  } from '../../../types';<% } %>
 
-const INITIAL_STATE: Array<> = [];
+const INITIAL_STATE: Array<any> = [];
 
-export function <%= moduleNameLowerCase %>Reducer(state = INITIAL_STATE, action: ApolloAction) {
-  switch (action.type) {
-    case 'APOLLO_QUERY_INIT':
-      break;
-    case 'APOLLO_QUERY_RESULT':
-      if (apolloActionName(action) === 'allPosts') {
-        return action.result.data;
-      }
-      break;
-    case 'APOLLO_QUERY_RESULT_CLIENT':
-      if (apolloActionName(action) === 'allPosts') {
-        return action.result.data;
-      }
-      break;
-    case 'APOLLO_MUTATION_INIT':
-      if (apolloActionName(action) === 'upvotePost') {
-        state = _.cloneDeep(state);
-      }
-      break;
-    case 'APOLLO_MUTATION_RESULT':
-      if (apolloActionName(action) === 'upvotePost') {
-        state = _.cloneDeep(state);
-      }
-      break;
+// Note: Remember to use `apolloOperationName` to check the query name
+
+/**
+ * Reducer for <%= Name %> module
+ */
+export function <%= name %>Reducer(state = INITIAL_STATE, action: ApolloAction) {
+  switch (action.type) {<% if (samples) { %>
+//    case 'APOLLO_QUERY_INIT':
+//      break;
+//    case 'APOLLO_QUERY_RESULT':
+//      if (apolloOperationName(action) === 'actionName') {
+//        return action.result.data;
+//      }
+//      break;
+//    case 'APOLLO_QUERY_RESULT_CLIENT':
+//      if (apolloOperationName(action) === 'actionName') {
+//        return action.result.data;
+//      }
+//      break;
+//    case 'APOLLO_MUTATION_INIT':
+//      if (apolloOperationName(action) === 'actionName') {
+//        state = _.cloneDeep(state);
+//      }
+//      break;
+//    case 'APOLLO_MUTATION_RESULT':
+//      if (apolloOperationName(action) === 'actionName') {
+//        state = _.cloneDeep(state);
+//      }
+//      break;<% } %>
   }
   return state;
 }

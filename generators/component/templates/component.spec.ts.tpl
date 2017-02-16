@@ -12,19 +12,19 @@ import { mock<%= Module %>Actions } from '../<%= module %>.spec';
 import { <%= Module %>Actions } from '../<%= module %>.actions';<% } %>
 
 /* <%= Name %> component */
-import { <%= Name %>Component } from './<%= name %>.component';
+import { <%= Module %><%= Name %>Component } from './<%= name %>.component';
 
 describe('<%= Module %>', () => {
-  describe('<%= Name %>Component', () => {
-    let component: <%= Name %>Component;
-    let fixture: ComponentFixture<<%= Name %>Component>;
+  describe('<%= Module %><%= Name %>Component', () => {
+    let component: <%= Module %><%= Name %>Component;
+    let fixture: ComponentFixture<<%= Module %><%= Name %>Component>;
     let element: HTMLElement;
     let debug: DebugElement;
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
         declarations: [
-          <%= Name %>Component<% if (useRouter) { %>,
+          <%= Module %><%= Name %>Component<% if (useRouter) { %>,
           RouterLinkStubDirective<% } %>
         ],
         providers: [<% if (useActions) { %>
@@ -36,7 +36,7 @@ describe('<%= Module %>', () => {
     }));
 
     beforeEach(() => {
-      fixture = TestBed.createComponent(<%= Name %>Component);
+      fixture = TestBed.createComponent(<%= Module %><%= Name %>Component);
       component = fixture.componentInstance;
       element = fixture.nativeElement;
       debug = fixture.debugElement;

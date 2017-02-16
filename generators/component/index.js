@@ -2,7 +2,7 @@
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
-const { Q } = require('../helpers');
+const { Q, findClosing, split } = require('../helpers');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -38,9 +38,8 @@ module.exports = class extends Generator {
   }
 
   _cpTplList(files) {
-    let Name = this.options.Name;
+    let {Name, ModuleName: Module} = this.options;
     let name = Name.toLowerCase();
-    let Module = this.options.ModuleName;
     let module = Module.toLowerCase();
 
     let context = Object.assign({
@@ -53,6 +52,36 @@ module.exports = class extends Generator {
         this.destinationPath(`src/app/${module}/components/${name}.${file}`),
         context
       );
-    })
+    });
+    let modulePath = this.destinationPath(`src/app/${module}/index.ts`);
+    let moduleSrc = this.fs.read(modulePath);
+    let moduleConfigStart = moduleSrc.indexOf('@NgModule(') + 10;
+    let moduleConfigEnd = findClosing(moduleSrc, moduleConfigStart - 1, '()');
+    let moduleConfig = moduleSrc.slice(moduleConfigStart + 1, moduleConfigEnd - 1).trim();
+    let declarations = split(moduleConfig, ',', true)
+      .filter(item => item.startsWith('declarations'))
+      .reduce((_, itm) => {
+        let src = itm.slice(itm.indexOf('[') + 1, -1);
+        let leadingWhitespace = src.match(/^(\s+)/)[ 0 ];
+        return {
+          src, newSrc: src.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}Component$1`)
+        };
+      }, '');
+    moduleSrc = moduleSrc.replace(
+      `declarations: [${declarations.src}]`,
+      `declarations: [${declarations.newSrc}]`
+    );
+
+    let lastImport = moduleSrc.match(/import \{[ \w_,]+} from '[^']+';/g).slice(-1)[0];
+
+    moduleSrc = moduleSrc.replace(
+      lastImport,
+      [
+        lastImport,
+        `import { ${Module}${Name}Component } from './components/${name}.component';`
+      ].join('\n')
+    );
+
+    this.fs.write(modulePath, moduleSrc);
   }
 };

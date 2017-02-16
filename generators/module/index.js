@@ -47,6 +47,6 @@ module.exports = class extends Generator {
         this.destinationPath(`src/app/${name}/${fileName}`),
         context
       );
-    })
+    });
   }
 };

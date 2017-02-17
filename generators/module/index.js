@@ -2,13 +2,13 @@
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
-const { Q } = require('../helpers');
+const { Q, ModuleUpdater } = require('../helpers');
 
-module.exports = class extends Generator {
+module.exports = class extends ModuleUpdater(Generator) {
   constructor(args, opts) {
     super(args, opts);
 
-    this.argument('ModuleName', { type: String, required: true });
+    this.argument('Name', { type: String, required: true });
   }
 
   prompting() {
@@ -19,6 +19,7 @@ module.exports = class extends Generator {
 
     return this
       .prompt(prompts)
+      .then(this._extractServices)
       .then(props => this.props = props);
   }
 
@@ -30,22 +31,5 @@ module.exports = class extends Generator {
       'router.ts',
       'spec.ts'
     ]);
-  }
-
-  _cpTplList(files) {
-    let Name = this.options.ModuleName;
-    let name = Name.toLowerCase();
-    let context = Object.assign({
-      Name, name
-    }, this.props);
-    files.forEach(file => {
-      let fileName = file === 'index.ts' ? file : `${name}.${file}`;
-
-      this.fs.copyTpl(
-        this.templatePath(`${file}.tpl`),
-        this.destinationPath(`src/app/${name}/${fileName}`),
-        context
-      );
-    });
   }
 };

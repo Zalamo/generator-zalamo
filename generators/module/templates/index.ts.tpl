@@ -11,10 +11,6 @@ import { ProvidedApolloModule } from '../core/store';
 import { <%= Name %>Actions<% if (samples) { %>/*, <%= Name %>FromRoute*/<% } %> } from './<%= name %>.actions';
 import { <%= Name %>RoutingModule } from './<%= name %>.router';
 
-/* Views */
-
-/* Components */
-
 /**
  * <%= description %>
  */
@@ -34,8 +30,7 @@ import { <%= Name %>RoutingModule } from './<%= name %>.router';
     // <%= Name %>FromRoute<% } %>
   ],
   exports: [
-    <%= Name %>RoutingModule,
-    // Views & Components placeholder
+    <%= Name %>RoutingModule
   ]
 })
 export class <%= Name %>Module {}

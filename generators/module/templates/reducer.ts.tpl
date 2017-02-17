@@ -7,6 +7,7 @@ import { apolloOperationName } from '../common';
 /* Types */<% if (samples) { %>
 // import {  } from '../../../types';<% } %>
 
+// TODO: update INITIAL_STATE type
 const INITIAL_STATE: Array<___> = [];
 
 // Note: Remember to use `apolloOperationName` to check the query name

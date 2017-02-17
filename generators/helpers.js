@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const Q = {
   input: (name, message, def) => ({ type: 'input', name, message, default: def }),
   confirm: (name, message, def) => ({ type: 'confirm', name, message, default: def }),
@@ -126,6 +128,69 @@ function split(src, term, trim = false) {
   return chunks;
 }
 
+const ModuleUpdater = (parent, type = null) => class extends parent {
+  _cpTplList(files) {
+    let { Name = '', Module = '' } = this.options;
+    let name = Name.toLowerCase();
+    let module = Module.toLowerCase();
+
+    files.forEach(file => {
+      let fileName = file === 'index.ts' ? file : `${name}.${file}`;
+
+      this.fs.copyTpl(
+        this.templatePath(`${file}.tpl`),
+        this.destinationPath(`src/app/${module}${type ? `/${type}s/` : `/${name}/` }${fileName}`),
+        Object.assign({ Name, name, Module, module }, this.props)
+      );
+    });
+  }
+
+  _updateModule() {
+    let { Name, Module } = this.options;
+    let name = Name.toLowerCase();
+    let module = Module.toLowerCase();
+
+    let modulePath = this.destinationPath(`src/app/${module}/index.ts`);
+    let moduleSrc = this.fs.read(modulePath);
+    let moduleConfigStart = moduleSrc.indexOf('@NgModule(') + 10;
+    let moduleConfigEnd = findClosing(moduleSrc, moduleConfigStart - 1, '()');
+    let moduleConfig = moduleSrc.slice(moduleConfigStart + 1, moduleConfigEnd - 1).trim();
+    let { oldSrc, newSrc } = split(moduleConfig, ',', true)
+      .filter(item => item.startsWith('declarations'))
+      .reduce((con, itm) => {
+        let oldSrc = itm.slice(itm.indexOf('[') + 1, -1);
+        let leadingWhitespace = oldSrc.match(/^(\s+)/)[ 0 ];
+        return {
+          oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}${_.capitalize(type)}$1`)
+        };
+      }, '');
+
+    let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
+    let imports = moduleSrc.match(new RegExp(importPattern, 'g'));
+
+    let targetImports = imports.filter(item => item.includes(`from './${type}s/`));
+    let newImport = `import { ${Module}${Name}${_.capitalize(type)} } from './${type}s/${name}.${type}';`;
+    let lastImport = (targetImports.length > 0 ? targetImports : imports).slice(-1)[ 0 ];
+
+    moduleSrc = moduleSrc
+      .replace(`declarations: [${oldSrc}]`, `declarations: [${newSrc}]`)
+      .replace(lastImport, [
+        lastImport,
+        ...(targetImports.length === 0 ? [ '', `/* ${_.capitalize(type)}s */` ] : []),
+        newImport
+      ].join('\n'));
+
+    this.fs.write(modulePath, moduleSrc);
+  }
+
+  _extractServices({ description, samples, services = [] }) {
+    return services.reduce((props, service) => (props[ `use${service}` ] = true) && props, {
+      description,
+      samples
+    });
+  }
+};
+
 module.exports = {
-  Q, findClosing, goTo, split
+  Q, ModuleUpdater, findClosing, goTo, split
 };

@@ -26,7 +26,7 @@ import { <%= Name %>RoutingModule } from './<%= name %>.router';
     // Views & Components placeholder
   ],
   providers: [
-    <%= Name %>Actions<% if (samples) { %>//,
+    <%= Name %>Actions<% if (samples) { %>// ,
     // <%= Name %>FromRoute<% } %>
   ],
   exports: [

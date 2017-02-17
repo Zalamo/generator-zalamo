@@ -7,7 +7,7 @@ import { <%= Module %>Actions } from '../<%= module %>.actions';<% } %>
 @Component({
   selector: '<%= module %>-<%= name %>-view',
   template: `<% if (samples) { %>
-    <h1>Hello {{model$ | async}}</h1>
+    <h1>Hello {{<%= module %>$ | async}}</h1>
 <% } %>`
 })
 export class <%= Module %><%= Name %>View<% if (samples) { %> implements OnInit, OnDestroy<% } %> {<% if (samples) { %>

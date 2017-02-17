@@ -1,12 +1,5 @@
+const Generator = require('yeoman-generator');
 const _ = require('lodash');
-
-const Q = {
-  input: (name, message, def) => ({ type: 'input', name, message, default: def }),
-  confirm: (name, message, def) => ({ type: 'confirm', name, message, default: def }),
-  checkbox: (name, message, choices) => ({ type: 'checkbox', name, message, choices }),
-  list: (name, message, choices) => ({ type: 'list', name, message, choices }),
-  option: (value, name = value, short = name) => ({ value, name, short })
-};
 
 /**
  * Find index of matching closing bracket
@@ -128,7 +121,24 @@ function split(src, term, trim = false) {
   return chunks;
 }
 
-const ModuleUpdater = (parent, type = null) => class extends parent {
+class ModuleUpdater extends Generator {
+  constructor({ type = null, files = [], prompts = [], args, opts }) {
+    super(args, opts);
+    this.type = type;
+    this.files = files;
+    this.prompts = prompts;
+  }
+
+  writing() {
+    this._cpTplList(this.files);
+  }
+
+  prompting() {
+    return this
+      .prompt(this.prompts.call ? this.prompts() : this.prompts)
+      .then(props => this.props = props);
+  }
+
   _cpTplList(files) {
     let { Name = '', Module = '' } = this.options;
     let name = Name.toLowerCase();
@@ -139,7 +149,7 @@ const ModuleUpdater = (parent, type = null) => class extends parent {
 
       this.fs.copyTpl(
         this.templatePath(`${file}.tpl`),
-        this.destinationPath(`src/app/${module}${type ? `/${type}s/` : `/${name}/` }${fileName}`),
+        this.destinationPath(`src/app/${module}${this.type ? `/${this.type}s/` : `/${name}/` }${fileName}`),
         Object.assign({ Name, name, Module, module }, this.props)
       );
     });
@@ -161,41 +171,29 @@ const ModuleUpdater = (parent, type = null) => class extends parent {
         let oldSrc = itm.slice(itm.indexOf('[') + 1, -1);
         let leadingWhitespace = oldSrc.match(/^(\s+)/)[ 0 ];
         return {
-          oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}${_.capitalize(type)}$1`)
+          oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}${_.capitalize(this.type)}$1`)
         };
       }, '');
 
     let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
     let imports = moduleSrc.match(new RegExp(importPattern, 'g'));
 
-    let targetImports = imports.filter(item => item.includes(`from './${type}s/`));
-    let newImport = `import { ${Module}${Name}${_.capitalize(type)} } from './${type}s/${name}.${type}';`;
+    let targetImports = imports.filter(item => item.includes(`from './${this.type}s/`));
+    let newImport = `import { ${Module}${Name}${_.capitalize(this.type)} } from './${this.type}s/${name}.${this.type}';`;
     let lastImport = (targetImports.length > 0 ? targetImports : imports).slice(-1)[ 0 ];
 
     moduleSrc = moduleSrc
       .replace(`declarations: [${oldSrc}]`, `declarations: [${newSrc}]`)
       .replace(lastImport, [
         lastImport,
-        ...(targetImports.length === 0 ? [ '', `/* ${_.capitalize(type)}s */` ] : []),
+        ...(targetImports.length === 0 ? [ '', `/* ${_.capitalize(this.type)}s */` ] : []),
         newImport
       ].join('\n'));
 
     this.fs.write(modulePath, moduleSrc);
   }
-
-  _extractServices(availableServices = []) {
-    return ({ description, samples, services = [] }) => {
-      return availableServices.reduce((props, service) => {
-        props[ `use${service}` ] = services.includes(service);
-        return props;
-      }, {
-        description,
-        samples
-      });
-    }
-  }
-};
+}
 
 module.exports = {
-  Q, ModuleUpdater, findClosing, goTo, split
+  ModuleUpdater, findClosing, goTo, split
 };

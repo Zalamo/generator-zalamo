@@ -1,41 +1,46 @@
 'use strict';
-const Generator = require('yeoman-generator');
 const chalk = require('chalk');
-const yosay = require('yosay');
-const { Q, ModuleUpdater } = require('../helpers');
+const { ModuleUpdater } = require('../helpers');
 
-module.exports = class extends ModuleUpdater(Generator, 'component') {
-  constructor(args, opts) {
-    super(args, opts);
+module.exports = class Component extends ModuleUpdater {
+  constructor(args, opts, services = [ 'Actions', 'Router' ]) {
+    super({
+      args, opts,
+      type: 'component',
+      files: [
+        'component.spec.ts',
+        'component.ts'
+      ],
+      prompts: [
+        { type: 'input', name: 'description', message: 'Describe a component', default: 'TODO: Write a documentation' },
+        { type: 'confirm', name: 'samples', message: 'Insert sample code?', default: false },
+        {
+          type: 'checkbox', name: 'services', message: 'Which services should I include?',
+          choices: services.map(value => ({ value }))
+        }
+      ]
+    });
 
     this.argument('Module', { type: String, required: true });
     this.argument('Name', { type: String, required: true });
+    this.services = services;
   }
 
   prompting() {
-    const services = [
-      'Actions',
-      'Router',
-      'Redux'
-    ];
+    return super.prompting()
+      .then((props) => {
+        let services = props.services || [];
+        this.props = this.services.reduce((base, service) => {
+          base[ `use${service}` ] = services.includes(service);
+          return base;
+        }, props);
 
-    const prompts = [
-      Q.input('description', 'Describe a component', 'TODO: Write a documentation'),
-      Q.confirm('samples', 'Insert sample code?', false),
-      Q.checkbox('services', 'Which services should I include?', services.map(service => Q.option(service)))
-    ];
-
-    return this
-      .prompt(prompts)
-      .then(this._extractServices(services))
-      .then(props => this.props = props);
+        return this.props;
+      });
   }
 
   writing() {
-    this._cpTplList([
-      'component.spec.ts',
-      'component.ts'
-    ]);
+    super.writing();
     this._updateModule();
   }
 };

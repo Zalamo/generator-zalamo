@@ -7,7 +7,7 @@ import { apolloOperationName } from '../common';
 /* Types */<% if (samples) { %>
 // import {  } from '../../../types';<% } %>
 
-const INITIAL_STATE: Array<any> = [];
+const INITIAL_STATE: Array<___> = [];
 
 // Note: Remember to use `apolloOperationName` to check the query name
 

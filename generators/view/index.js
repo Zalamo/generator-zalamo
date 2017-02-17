@@ -2,6 +2,8 @@
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
+const _ = require('lodash');
+
 const { Q, findClosing, split } = require('../helpers');
 
 module.exports = class extends Generator {
@@ -14,30 +16,34 @@ module.exports = class extends Generator {
 
   prompting() {
     const prompts = [
-      Q.input('description', 'Describe a component', 'TODO: Write a documentation'),
+      Q.input('description', 'Describe a view', 'TODO: Write a documentation'),
       Q.confirm('samples', 'Insert sample code?', false),
       Q.checkbox('services', 'Which services should I include?', [
-        Q.option('actions', 'Actions'),
-        Q.option('router', 'Router')
+        Q.option('Actions'),
+        Q.option('Router'),
+        Q.option('Redux')
       ])
     ];
 
     return this
       .prompt(prompts)
-      .then(({ description, samples, services }) => ({
-        description, samples, useRouter: services.includes('router'), useActions: services.includes('actions')
-      }))
+      .then(({ description, samples, services }) => {
+        return services.reduce((props, service) => (props[ `use${service}` ] = true) && props, {
+          description,
+          samples
+        });
+      })
       .then(props => this.props = props);
   }
 
   writing() {
     this._cpTplList([
-      'component.spec.ts',
-      'component.ts'
-    ]);
+      'view.spec.ts',
+      'view.ts'
+    ], 'view');
   }
 
-  _cpTplList(files) {
+  _cpTplList(files, type) {
     let { Name, ModuleName: Module } = this.options;
     let name = Name.toLowerCase();
     let module = Module.toLowerCase();
@@ -48,7 +54,7 @@ module.exports = class extends Generator {
     files.forEach(file => {
       this.fs.copyTpl(
         this.templatePath(`${file}.tpl`),
-        this.destinationPath(`src/app/${module}/components/${name}.${file}`),
+        this.destinationPath(`src/app/${module}/${type}s/${name}.${file}`),
         context
       );
     });
@@ -57,36 +63,30 @@ module.exports = class extends Generator {
     let moduleConfigStart = moduleSrc.indexOf('@NgModule(') + 10;
     let moduleConfigEnd = findClosing(moduleSrc, moduleConfigStart - 1, '()');
     let moduleConfig = moduleSrc.slice(moduleConfigStart + 1, moduleConfigEnd - 1).trim();
-    let declarations = split(moduleConfig, ',', true)
+    let { oldSrc, newSrc } = split(moduleConfig, ',', true)
       .filter(item => item.startsWith('declarations'))
-      .reduce((_, itm) => {
-        let src = itm.slice(itm.indexOf('[') + 1, -1);
-        let leadingWhitespace = src.match(/^(\s+)/)[ 0 ];
+      .reduce((con, itm) => {
+        let oldSrc = itm.slice(itm.indexOf('[') + 1, -1);
+        let leadingWhitespace = oldSrc.match(/^(\s+)/)[ 0 ];
         return {
-          src, newSrc: src.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}Component$1`)
+          oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}${_.capitalize(type)}$1`)
         };
       }, '');
 
     let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
     let imports = moduleSrc.match(new RegExp(importPattern, 'g'));
 
-    let targetImports = imports.filter(item => item.includes(`from './components/`));
-    let newImport = `import { ${Module}${Name}Component } from './components/${name}.component';`;
+    let targetImports = imports.filter(item => item.includes(`from './${type}s/`));
+    let newImport = `import { ${Module}${Name}${_.capitalize(type)} } from './${type}s/${name}.${type}';`;
     let lastImport = (targetImports.length > 0 ? targetImports : imports).slice(-1)[ 0 ];
 
     moduleSrc = moduleSrc
-      .replace(
-        `declarations: [${declarations.src}]`,
-        `declarations: [${declarations.newSrc}]`
-      )
-      .replace(
+      .replace(`declarations: [${oldSrc}]`, `declarations: [${newSrc}]`)
+      .replace(lastImport, [
         lastImport,
-        [
-          lastImport,
-          ...(targetImports.length === 0 ? [ '', '/* Components */' ] : []),
-          newImport
-        ].join('\n')
-      );
+        ...(targetImports.length === 0 ? [ '', `/* ${_.capitalize(type)}s */` ] : []),
+        newImport
+      ].join('\n'));
 
     this.fs.write(modulePath, moduleSrc);
   }

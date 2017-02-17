@@ -36,7 +36,6 @@ module.exports = class extends Generator {
     let Name = this.options.ModuleName;
     let name = Name.toLowerCase();
     let context = Object.assign({
-      appPrefix: 'app',
       Name, name
     }, this.props);
     files.forEach(file => {

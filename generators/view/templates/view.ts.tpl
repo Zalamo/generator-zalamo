@@ -11,7 +11,7 @@ import { <%= Module %>Actions } from '../<%= module %>.actions';<% } %>
 <% } %>`
 })
 export class <%= Module %><%= Name %>View<% if (samples) { %> implements OnInit, OnDestroy<% } %> {<% if (samples) { %>
-  <% if (useRedux) { %>@select() <% } %>model$: Observable<___>;
+  <% if (useRedux) { %>@select() <% } %><%= module %>$: Observable<___>;
 
   private _sub: Subscription;
 <% } %><% if (useActions || useRouter) { %>

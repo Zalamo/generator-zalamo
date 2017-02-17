@@ -13,20 +13,21 @@ module.exports = class extends ModuleUpdater(Generator, 'component') {
   }
 
   prompting() {
+    const services = [
+      'Actions',
+      'Router',
+      'Redux'
+    ];
+
     const prompts = [
       Q.input('description', 'Describe a component', 'TODO: Write a documentation'),
       Q.confirm('samples', 'Insert sample code?', false),
-      Q.checkbox('services', 'Which services should I include?', [
-        Q.option('actions', 'Actions'),
-        Q.option('router', 'Router')
-      ])
+      Q.checkbox('services', 'Which services should I include?', services.map(service => Q.option(service)))
     ];
 
     return this
       .prompt(prompts)
-      .then(({ description, samples, services }) => ({
-        description, samples, useRouter: services.includes('router'), useActions: services.includes('actions')
-      }))
+      .then(this._extractServices(services))
       .then(props => this.props = props);
   }
 

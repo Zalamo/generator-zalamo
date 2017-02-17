@@ -19,7 +19,6 @@ module.exports = class extends ModuleUpdater(Generator) {
 
     return this
       .prompt(prompts)
-      .then(this._extractServices)
       .then(props => this.props = props);
   }
 

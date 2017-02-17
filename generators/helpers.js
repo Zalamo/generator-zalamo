@@ -183,11 +183,16 @@ const ModuleUpdater = (parent, type = null) => class extends parent {
     this.fs.write(modulePath, moduleSrc);
   }
 
-  _extractServices({ description, samples, services = [] }) {
-    return services.reduce((props, service) => (props[ `use${service}` ] = true) && props, {
-      description,
-      samples
-    });
+  _extractServices(availableServices = []) {
+    return ({ description, samples, services = [] }) => {
+      return availableServices.reduce((props, service) => {
+        props[ `use${service}` ] = services.includes(service);
+        return props;
+      }, {
+        description,
+        samples
+      });
+    }
   }
 };
 

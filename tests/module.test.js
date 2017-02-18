@@ -1,16 +1,7 @@
 const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const path = require('path');
-
-const docRegExp = chunks => {
-  return new RegExp(`\\/\\*\\*[\\s]+\\* ${chunks[ 0 ]}[\\s]+\\*\\/`);
-};
-
-const rex = ([ pattern ]) => new RegExp(
-  pattern.trim()
-    .replace(/([\[(){.*\\])/g, "\\$1")
-    .replace(/([\s][\s]+)|[\n]/g, "[\\s]+")
-);
+const { docRegExp, rex } = require('./helpers');
 
 describe('zalamo:module', () => {
   const generatorModulePath = path.join(__dirname, '../generators/module');

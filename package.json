@@ -22,16 +22,15 @@
     "yeoman-generator": "^1.0.0",
     "yosay": "^1.2.1"
   },
-  "eslintConfig": {
-    "extends": "xo-space",
-    "env": {
-      "mocha": true
-    }
-  },
   "repository": "Draccoz/generator-zalamo",
   "scripts": {
     "prepublish": "gulp prepublish",
     "test": "gulp"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "yeoman-test": "latest",
+    "yeoman-assert": "latest"
+  }
 }

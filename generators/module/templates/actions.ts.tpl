@@ -2,11 +2,11 @@
 import { Injectable } from '@angular/core';<% if (samples) { %>
 import { ActivatedRoute, Params } from '@angular/router';
 import { NgRedux } from '@angular-redux/store';<% } %>
-import { Apollo, } from 'apollo-angular';<% if (samples) { %>
+import { Apollo } from 'apollo-angular';<% if (samples) { %>
 import { Observable } from 'rxjs';
-import gql from 'graphql-tag';<% } %>
+import gql from 'graphql-tag';<% } %><% if (samples) { %>
 
-/* Types */<% if (samples) { %>
+/* Types */
 // import { AppState, ApolloQuery, Cast, /*__QUERY_TYPE__*/ } from '../../../types';
 
 // const __FETCH_QUERY__ = gql`

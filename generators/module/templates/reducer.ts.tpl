@@ -2,9 +2,9 @@
 import { ApolloAction } from 'apollo-client/actions';
 
 /* C&C */
-import { apolloOperationName } from '../common';
+import { apolloOperationName } from '../common';<% if (samples) { %>
 
-/* Types */<% if (samples) { %>
+/* Types */
 // import {  } from '../../../types';<% } %>
 
 // TODO: update INITIAL_STATE type

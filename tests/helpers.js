@@ -1,6 +1,3 @@
-const docRegExp = chunks => {
-  return new RegExp(`\\/\\*\\*[\\s]+\\* ${chunks[ 0 ]}[\\s]+\\*\\/`);
-};
 const rex = (chunks, ...values) => new RegExp(
   chunks
     .reduce((res, chunk, i) => res + chunk + (i < values.length ? values[i] : ''), '')
@@ -9,4 +6,10 @@ const rex = (chunks, ...values) => new RegExp(
     .replace(/([\s][\s]+)|[\n]/g, "[\\s]*")
 );
 
-module.exports = { docRegExp, rex };
+const rexAny = patterns => new RegExp(patterns.map(pattern => pattern.source).join('|'));
+
+const docRegExp = ([chunk]) => rex`/**\n* ${chunk}\n*/`;
+
+const containsIf = (condition) => condition ? 'fileContent' : 'noFileContent';
+
+module.exports = { docRegExp, rex, rexAny, containsIf };

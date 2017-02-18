@@ -3,11 +3,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-
-/* C&C */<% if (useRouter) { %>
+<% if (useRouter) { %>
+/* C&C */
 import { RouterLinkStubDirective } from '../../common/mocks';<% } %>
-
-/* <%= Module %> module pieces */<% if (useActions) { %>
+<% if (useActions) { %>
+/* <%= Module %> module pieces */
 import { mock<%= Module %>Actions } from '../<%= module %>.spec';
 import { <%= Module %>Actions } from '../<%= module %>.actions';<% } %>
 

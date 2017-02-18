@@ -1,7 +1,7 @@
 const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const path = require('path');
-const { docRegExp, rex } = require('./helpers');
+const { docRegExp, rex, containsIf } = require('./helpers');
 
 const generatorModulePath = path.join(__dirname, '../generators/module');
 const index = 'src/app/test/index.ts';
@@ -10,8 +10,8 @@ const reducer = 'src/app/test/test.reducer.ts';
 const router = 'src/app/test/test.router.ts';
 const spec = 'src/app/test/test.spec.ts';
 
-const makeSuite = ({ samples }) => function () {
-  beforeEach(() => helpers
+const describeSuite = (title, { samples }) => describe(title, () => {
+  before(() => helpers
     .run(generatorModulePath)
     .withArguments([ 'Test' ])
     .withPrompts({ description: 'This is the test doc', samples }));
@@ -24,8 +24,6 @@ const makeSuite = ({ samples }) => function () {
     assert.file(spec);
   });
   it('should add required imports', () => {
-    const checkFor = samples ? 'fileContent' : 'noFileContent';
-
     assert.fileContent(index, rex`import { NgModule } from '@angular/core';`);
     assert.fileContent(index, rex`import { CommonModule } from '@angular/common';`);
     assert.fileContent(index, rex`import { NgReduxModule } from '@angular-redux/store';`);
@@ -49,15 +47,15 @@ const makeSuite = ({ samples }) => function () {
 
     assert.fileContent(index,rex`import { TestActions${samples ? '/*, TestFromRoute*/' : ''} } from './test.actions';`);
 
-    assert[ checkFor ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
-    assert[ checkFor ](actions, rex`import { NgRedux } from '@angular-redux/store';`);
-    assert[ checkFor ](actions, rex`import { Observable } from 'rxjs';`);
-    assert[ checkFor ](actions, rex`import gql from 'graphql-tag';`);
-    assert[ checkFor ](actions, rex`
+    assert[ containsIf(samples) ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
+    assert[ containsIf(samples) ](actions, rex`import { NgRedux } from '@angular-redux/store';`);
+    assert[ containsIf(samples) ](actions, rex`import { Observable } from 'rxjs';`);
+    assert[ containsIf(samples) ](actions, rex`import gql from 'graphql-tag';`);
+    assert[ containsIf(samples) ](actions, rex`
       /* Types */
       // import { AppState, ApolloQuery, Cast, /*__QUERY_TYPE__*/ } from '../../../types';
     `);
-    assert[ checkFor ](reducer, rex`
+    assert[ containsIf(samples) ](reducer, rex`
       /* Types */
       // import {  } from '../../../types';
     `);
@@ -201,15 +199,13 @@ const makeSuite = ({ samples }) => function () {
     `);
   });
   it('should only add code samples to actions if `samples` are true', () => {
-    const checkFor = samples ? 'fileContent' : 'noFileContent';
-
-    assert[ checkFor ](actions, rex`
+    assert[ containsIf(samples) ](actions, rex`
       // const __FETCH_QUERY__ = gql\`
       //   query __FETCH_QUERY__ {
       //
       //   }\`;
     `);
-    assert[ checkFor ](actions, rex`
+    assert[ containsIf(samples) ](actions, rex`
       // /**
       //  * Get Test by route param
       //  */
@@ -223,9 +219,9 @@ const makeSuite = ({ samples }) => function () {
       // }
     `);
   });
-};
+});
 
 describe('zalamo:module', () => {
-  describe('samples: false', makeSuite({ samples: false }));
-  describe('samples: true', makeSuite({ samples: true }));
+  describeSuite('samples: false', { samples: false });
+  describeSuite('samples: true', { samples: true });
 });

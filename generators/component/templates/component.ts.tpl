@@ -3,9 +3,9 @@ import { <%= Module %>Actions } from '../<%= module %>.actions';<% } %>
 
 @Component({
   selector: '<%= module %>-<%= name %>',
-  template: `<% if (samples) { %>
-    <h1>Hello {{me}}</h1>
-<% } %>`
+  template: `
+    <% if (samples) { %><h1>Hello {{me}}</h1><% } %>
+  `
 })
 export class <%= Module %><%= Name %>Component {<% if (samples) { %>
   @Input() me = 'world';

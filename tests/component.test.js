@@ -2,7 +2,7 @@ const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { rex, rexAny, containsIf } = require('./helpers');
+const { rex, rexAny, contentIf, If } = require('./helpers');
 
 const generatorModulePath = join(__dirname, '../generators/component');
 const modulePath = 'src/app/test';
@@ -15,23 +15,27 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
     .inTmpDir(dir => copySync(join(__dirname, 'assets', sampleModule), join(dir, modulePath, 'index.ts')))
     .withArguments([ 'Test', 'Item' ])
     .withPrompts({
-      description: 'This is the test doc', samples: false, services: [
-        ...(useActions ? [ 'Actions' ] : []),
-        ...(useRouter ? [ 'Router' ] : [])
+      description: 'This is the test doc', samples: samples, services: [
+        ...(If(useActions, Array)`Actions`),
+        ...(If(useRouter, Array)`Router`)
       ]
     }));
+
+  const ifSamples = If(samples);
+  const ifActions = If(useActions);
+  const ifRouter = If(useRouter);
 
   it('should have proper files structure ', () => {
     assert.file(component);
     assert.file(spec);
   });
   it('should add required imports', () => {
-    assert.fileContent(component, rex`import { Component } from '@angular/core';`);
-    assert[ containsIf(useActions) ](component, rex`import { TestActions } from '../test.actions';`);
-    assert[ containsIf(useActions) ](spec, rex`import { mockTestActions } from '../test.spec';`);
-    assert[ containsIf(useActions) ](spec, rex`import { TestActions } from '../test.actions';`);
+    assert.fileContent(component, rex`import { Component${ifSamples`, Input`} } from '@angular/core';`);
+    assert[ contentIf(useActions) ](component, rex`import { TestActions } from '../test.actions';`);
+    assert[ contentIf(useActions) ](spec, rex`import { mockTestActions } from '../test.spec';`);
+    assert[ contentIf(useActions) ](spec, rex`import { TestActions } from '../test.actions';`);
 
-    assert[ containsIf(useRouter) ](spec, rex`import { RouterLinkStubDirective } from '../../common/mocks';`);
+    assert[ contentIf(useRouter) ](spec, rex`import { RouterLinkStubDirective } from '../../common/mocks';`);
 
     assert.fileContent(spec, rex`import { async, ComponentFixture, TestBed } from '@angular/core/testing';`);
     assert.fileContent(spec, rex`import { By } from '@angular/platform-browser';`);
@@ -76,10 +80,13 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
     assert.fileContent(component, rex`
       @Component({
         selector: 'test-item',
-        template: \`\`
+        template: \`
+          ${ifSamples`<h1>Hello {{me}}</h1>`}
+        \`
       })
       export class TestItemComponent {
-        ${useActions ? 'constructor(public actions: TestActions) {}' : ''}
+        ${ifSamples`@Input() me = 'world';`}
+        ${ifActions`constructor(public actions: TestActions) {}` }
       }
     `);
   });
@@ -104,12 +111,11 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
       beforeEach(async(() => {
         TestBed.configureTestingModule({
           declarations: [
-            TestItemComponent${
-      useRouter ? `,\nRouterLinkStubDirective` : ''
-      }
+            TestItemComponent${ifRouter`,
+            RouterLinkStubDirective`}
           ],
           providers: [
-            ${useActions ? '{ provide: TestActions, useValue: mockTestActions() }' : ''}
+            ${ifActions`{ provide: TestActions, useValue: mockTestActions() }`}
           ],
           schemas: [ NO_ERRORS_SCHEMA ]
         })
@@ -134,6 +140,15 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
       });
     `);
   });
+  it('should create a property changing test if `samples` are set', () => {
+    assert[contentIf(samples)](spec, rex`
+      it('should contain a valid title', () => {
+        component.me = 'Tests';
+        fixture.detectChanges();
+        expect(debug.query(By.css('h1')).nativeElement.textContent).toEqual('Hello Tests');
+      });
+    `);
+  });
 });
 
 describe('zalamo:component', () => {
@@ -143,7 +158,7 @@ describe('zalamo:component', () => {
     useRouter: false,
     sampleModule: 'index.ts.sample'
   });
-  describeSuite('samples: false, services: none', {
+  describeSuite('samples: false, services: none (module has component)', {
     samples: false,
     useActions: false,
     useRouter: false,
@@ -164,6 +179,25 @@ describe('zalamo:component', () => {
   });
   describeSuite('samples: false, services: Actions, Router', {
     samples: false,
+    useActions: true,
+    useRouter: true,
+    sampleModule: 'index.ts.sample'
+  });
+
+  describeSuite('samples: true, services: Actions', {
+    samples: true,
+    useActions: true,
+    useRouter: false,
+    sampleModule: 'index.ts.sample'
+  });
+  describeSuite('samples: true, services: Router', {
+    samples: true,
+    useActions: false,
+    useRouter: true,
+    sampleModule: 'index.ts.sample'
+  });
+  describeSuite('samples: true, services: Actions, Router', {
+    samples: true,
     useActions: true,
     useRouter: true,
     sampleModule: 'index.ts.sample'

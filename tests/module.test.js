@@ -1,7 +1,7 @@
 const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const path = require('path');
-const { docRegExp, rex, containsIf } = require('./helpers');
+const { docRegExp, rex, contentIf, If } = require('./helpers');
 
 const generatorModulePath = path.join(__dirname, '../generators/module');
 const index = 'src/app/test/index.ts';
@@ -45,17 +45,17 @@ const describeSuite = (title, { samples }) => describe(title, () => {
     assert.fileContent(spec, rex`import { TestActions } from './test.actions';`);
     assert.fileContent(spec, rex`import { testReducer } from './test.reducer';`);
 
-    assert.fileContent(index,rex`import { TestActions${samples ? '/*, TestFromRoute*/' : ''} } from './test.actions';`);
+    assert.fileContent(index, rex`import { TestActions${If(samples)`/*, TestFromRoute*/`} } from './test.actions';`);
 
-    assert[ containsIf(samples) ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
-    assert[ containsIf(samples) ](actions, rex`import { NgRedux } from '@angular-redux/store';`);
-    assert[ containsIf(samples) ](actions, rex`import { Observable } from 'rxjs';`);
-    assert[ containsIf(samples) ](actions, rex`import gql from 'graphql-tag';`);
-    assert[ containsIf(samples) ](actions, rex`
+    assert[ contentIf(samples) ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
+    assert[ contentIf(samples) ](actions, rex`import { NgRedux } from '@angular-redux/store';`);
+    assert[ contentIf(samples) ](actions, rex`import { Observable } from 'rxjs';`);
+    assert[ contentIf(samples) ](actions, rex`import gql from 'graphql-tag';`);
+    assert[ contentIf(samples) ](actions, rex`
       /* Types */
       // import { AppState, ApolloQuery, Cast, /*__QUERY_TYPE__*/ } from '../../../types';
     `);
-    assert[ containsIf(samples) ](reducer, rex`
+    assert[ contentIf(samples) ](reducer, rex`
       /* Types */
       // import {  } from '../../../types';
     `);
@@ -82,9 +82,9 @@ const describeSuite = (title, { samples }) => describe(title, () => {
         // Views & Components placeholder
       ]
     `);
-    assert.fileContent(index,rex`
+    assert.fileContent(index, rex`
       providers: [
-        TestActions${samples ? `// ,\n// TestFromRoute` : ''}
+        TestActions${If(samples)`// ,\n// TestFromRoute`}
       ]
     `);
     assert.fileContent(index, rex`
@@ -107,12 +107,12 @@ const describeSuite = (title, { samples }) => describe(title, () => {
       @Injectable()
       export class TestActions {
         constructor(private apollo: Apollo) {}
-        ${samples ? `
+        ${If(samples)`
         // fetchTest(): ApolloQuery<__QUERY_TYPE__.Result> {
         //   return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
         //     .watchQuery({ query: __FETCH_QUERY__ });
         // }
-        ` : ''}
+        `}
       }
     `);
   });
@@ -120,7 +120,7 @@ const describeSuite = (title, { samples }) => describe(title, () => {
     assert.fileContent(reducer, rex`
       export function testReducer(state = INITIAL_STATE, action: ApolloAction) {
         switch (action.type) {
-        ${samples ? `
+        ${If(samples)`
         //    case 'APOLLO_QUERY_INIT':
         //      break;
         //    case 'APOLLO_QUERY_RESULT':
@@ -143,7 +143,7 @@ const describeSuite = (title, { samples }) => describe(title, () => {
         //        state = _.cloneDeep(state);
         //      }
         //      break;
-        ` : ``}
+        `}
         }
         return state;
       }
@@ -199,13 +199,13 @@ const describeSuite = (title, { samples }) => describe(title, () => {
     `);
   });
   it('should only add code samples to actions if `samples` are true', () => {
-    assert[ containsIf(samples) ](actions, rex`
+    assert[ contentIf(samples) ](actions, rex`
       // const __FETCH_QUERY__ = gql\`
       //   query __FETCH_QUERY__ {
       //
       //   }\`;
     `);
-    assert[ containsIf(samples) ](actions, rex`
+    assert[ contentIf(samples) ](actions, rex`
       // /**
       //  * Get Test by route param
       //  */

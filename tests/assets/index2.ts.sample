@@ -1,0 +1,43 @@
+/* 3rd party modules */
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgReduxModule } from '@angular-redux/store';
+
+/* C&C modules */
+import { AppCommonModule } from '../common';
+import { ProvidedApolloModule } from '../core/store';
+
+/* Components */
+import { SomeComponent } from './components/some.component';
+
+/* Test module pieces */
+import { TestActions } from './test.actions';
+import { TestRoutingModule } from './test.router';
+
+/**
+ * TODO: Write a documentation
+ */
+@NgModule({
+  imports: [
+    CommonModule,
+    AppCommonModule,
+    TestRoutingModule,
+    NgReduxModule,
+    ProvidedApolloModule
+  ],
+  declarations: [
+    // Views & Components placeholder,
+    SomeComponent
+  ],
+  providers: [
+    TestActions
+  ],
+  exports: [
+    TestRoutingModule
+  ]
+})
+export class TestModule {}
+
+export * from './test.actions';
+export * from './test.reducer';
+export * from './test.router';

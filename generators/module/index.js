@@ -8,11 +8,11 @@ module.exports = class extends ModuleUpdater {
     super({
       args, opts,
       files: [
-        'actions.ts',
-        'index.ts',
-        'reducer.ts',
-        'router.ts',
-        'spec.ts'
+        'actions',
+        'index',
+        'reducer',
+        'router',
+        'spec'
       ],
       prompts: [
         { type: 'input', name: 'description', message: 'Describe a module', default: 'TODO: Write a documentation' },

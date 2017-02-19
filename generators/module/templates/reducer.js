@@ -1,22 +1,24 @@
+const { If } = require('../../../tests/helpers');
+module.exports = ({ samples, description, name, Name }) => `
 /* 3rd party modules */
 import { ApolloAction } from 'apollo-client/actions';
 
 /* C&C */
-import { apolloOperationName } from '../common';<% if (samples) { %>
+import { apolloOperationName } from '../common';${If(samples)`
 
 /* Types */
-// import {  } from '../../../types';<% } %>
+// import {  } from '../../../types';`}
 
 // TODO: update INITIAL_STATE type
 const INITIAL_STATE: Array<___> = [];
 
-// Note: Remember to use `apolloOperationName` to check the query name
+// Note: Remember to use \`apolloOperationName\` to check the query name
 
 /**
- * Reducer for <%= Name %> module
+ * Reducer for ${Name} module
  */
-export function <%= name %>Reducer(state = INITIAL_STATE, action: ApolloAction) {
-  switch (action.type) {<% if (samples) { %>
+export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
+  switch (action.type) {${If(samples)`
 //    case 'APOLLO_QUERY_INIT':
 //      break;
 //    case 'APOLLO_QUERY_RESULT':
@@ -38,7 +40,8 @@ export function <%= name %>Reducer(state = INITIAL_STATE, action: ApolloAction) 
 //      if (apolloOperationName(action) === 'actionName') {
 //        state = _.cloneDeep(state);
 //      }
-//      break;<% } %>
+//      break;`}
   }
   return state;
 }
+`;

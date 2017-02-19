@@ -130,7 +130,7 @@ class ModuleUpdater extends Generator {
   }
 
   writing() {
-    this._cpTplList(this.files);
+    this._cpTplList();
   }
 
   prompting() {
@@ -139,18 +139,18 @@ class ModuleUpdater extends Generator {
       .then(props => this.props = props);
   }
 
-  _cpTplList(files) {
+  _cpTplList() {
     let { Name = '', Module = '' } = this.options;
     let name = Name.toLowerCase();
     let module = Module.toLowerCase();
 
-    files.forEach(file => {
-      let fileName = file === 'index.ts' ? file : `${name}.${file}`;
+    this.files.forEach(file => {
+      let fileName = file === 'index' ? file : `${name}.${file}`;
+      let tpl = require(this.templatePath(file));
 
-      this.fs.copyTpl(
-        this.templatePath(`${file}.tpl`),
-        this.destinationPath(`src/app/${module}${this.type ? `/${this.type}s/` : `/${name}/` }${fileName}`),
-        Object.assign({ Name, name, Module, module }, this.props)
+      this.fs.write(
+        this.destinationPath(`src/app/${module}${this.type ? `/${this.type}s/` : `/${name}/` }${fileName}.ts`),
+        tpl(Object.assign({ Name, name, Module, module }, this.props))
       );
     });
   }

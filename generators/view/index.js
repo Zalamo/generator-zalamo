@@ -6,8 +6,8 @@ module.exports = class View extends Component {
     super(args, opts, [ 'Actions', 'Router', 'Redux' ]);
     this.type = 'view';
     this.files = [
-      'view.spec.ts',
-      'view.ts'
+      'view.spec',
+      'view'
     ];
   }
 

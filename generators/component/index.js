@@ -8,8 +8,8 @@ module.exports = class Component extends ModuleUpdater {
       args, opts,
       type: 'component',
       files: [
-        'component.spec.ts',
-        'component.ts'
+        'component.spec',
+        'component'
       ],
       prompts: [
         { type: 'input', name: 'description', message: 'Describe a component', default: 'TODO: Write a documentation' },

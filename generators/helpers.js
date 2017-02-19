@@ -141,8 +141,8 @@ class ModuleUpdater extends Generator {
 
   _cpTplList() {
     let { Name = '', Module = '' } = this.options;
-    let name = Name.toLowerCase();
-    let module = Module.toLowerCase();
+    let name = _.kebabCase(Name);
+    let module = _.kebabCase(Module);
 
     this.files.forEach(file => {
       let fileName = file === 'index' ? file : `${name}.${file}`;
@@ -157,8 +157,8 @@ class ModuleUpdater extends Generator {
 
   _updateModule() {
     let { Name, Module } = this.options;
-    let name = Name.toLowerCase();
-    let module = Module.toLowerCase();
+    let name = _.kebabCase(Name);
+    let module = _.kebabCase(Module);
 
     let modulePath = this.destinationPath(`src/app/${module}/index.ts`);
     let moduleSrc = this.fs.read(modulePath);

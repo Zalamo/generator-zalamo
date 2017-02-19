@@ -25,4 +25,19 @@ const If = (condition, mode = String) => (chunks, ...values) => {
   }
 };
 
-module.exports = { docRegExp, rex, rexAny, contentIf, If };
+function generateConfigPermutation(keys) {
+  return Array.from({length: Math.pow(keys.length, 2)}, (v, i) => keys.reduce((config, key, j) => {
+    config[ key ] = !!(i & ++j);
+    return config;
+  }, {}));
+}
+
+function config2services(config) {
+  return Object
+      .keys(config)
+      .filter(key => key.startsWith('use'))
+      .filter(key => config[ key ])
+      .map(key => key.substr(3))
+}
+
+module.exports = { docRegExp, rex, rexAny, contentIf, If, generateConfigPermutation, config2services };

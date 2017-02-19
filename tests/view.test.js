@@ -2,24 +2,21 @@ const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { rex, rexAny, contentIf, If } = require('./helpers');
+const { rex, rexAny, contentIf, If, generateConfigPermutation, config2services } = require('./helpers');
 
 const generatorModulePath = join(__dirname, '../generators/view');
 const modulePath = 'src/app/test';
 const view = `${modulePath}/views/item.view.ts`;
 const spec = `${modulePath}/views/item.view.spec.ts`;
 
-const describeSuite = (title, { samples, useActions, useRouter, useRedux }) => describe(title, () => {
+const describeSuite = (title, config) => describe(title, () => {
+  const { samples, useActions, useRouter, useRedux } = config;
   before(() => helpers
     .run(generatorModulePath)
     .inTmpDir(dir => copySync(join(__dirname, 'assets', 'index.ts.sample'), join(dir, modulePath, 'index.ts')))
     .withArguments([ 'Test', 'Item' ])
     .withPrompts({
-      description: 'This is the test doc', samples: samples, services: [
-        ...(If(useActions, Array)`Actions`),
-        ...(If(useRouter, Array)`Router`),
-        ...(If(useRedux, Array)`Redux`)
-      ]
+      description: 'This is the test doc', samples: samples, services: config2services(config)
     }));
 
   const ifSamples = If(samples);
@@ -128,23 +125,10 @@ const describeSuite = (title, { samples, useActions, useRouter, useRedux }) => d
 });
 
 describe('zalamo:view', () => {
-  Array
-    .from({ length: 16 }, (v, i) => ({
-      samples: !!(i & 1),
-      useActions: !!(i & 2),
-      useRouter: !!(i & 4),
-      useRedux: !!(i & 8)
-    }))
+  generateConfigPermutation([ 'samples', 'useActions', 'useRouter', 'useRedux' ])
     .map(config => ({
       config,
-      title: `samples: ${config.samples}, services: ${
-      Object
-        .keys(config)
-        .filter(key => key.startsWith('use'))
-        .filter(key => config[ key ])
-        .map(key => key.substr(3))
-        .join(', ') || 'none'
-        }`
+      title: `samples: ${config.samples}, services: ${config2services(config).join(', ') || 'none'}`
     }))
     .forEach(({ title, config }) => describeSuite(title, config));
 });

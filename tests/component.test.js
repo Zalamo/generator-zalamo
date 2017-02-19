@@ -2,7 +2,7 @@ const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { rex, rexAny, contentIf, If } = require('./helpers');
+const { rex, rexAny, contentIf, If, generateConfigPermutation, config2services } = require('./helpers');
 
 const generatorModulePath = join(__dirname, '../generators/component');
 const modulePath = 'src/app/test';
@@ -141,7 +141,7 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
     `);
   });
   it('should create a property changing test if `samples` are set', () => {
-    assert[contentIf(samples)](spec, rex`
+    assert[ contentIf(samples) ](spec, rex`
       it('should contain a valid title', () => {
         component.me = 'Tests';
         fixture.detectChanges();
@@ -152,26 +152,12 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
 });
 
 describe('zalamo:component', () => {
-  Array
-    .from({ length: 16 }, (v, i) => ({
-      samples: !!(i & 1),
-      useActions: !!(i & 2),
-      useRouter: !!(i & 4),
-      sampleModule: !!(i & 8)
+  generateConfigPermutation([ 'samples', 'useActions', 'useRouter', 'useRedux' ])
+    .map(config => ({
+      title: `samples: ${config.samples}, services: ${config2services(config).join(', ') || 'none'}`,
+      config: Object.assign(config, {
+        sampleModule: config.sampleModule ? 'index.ts.sample' : 'index2.ts.sample'
+      })
     }))
-    .map(config => {
-      config.sampleModule = config.sampleModule ? 'index.ts.sample' : 'index2.ts.sample';
-      return {
-        config,
-        title: `samples: ${config.samples}, services: ${
-        Object
-          .keys(config)
-          .filter(key => key.startsWith('use'))
-          .filter(key => config[ key ])
-          .map(key => key.substr(3))
-          .join(', ') || 'none'
-          }`
-      };
-    })
     .forEach(({ title, config }) => describeSuite(title, config));
 });

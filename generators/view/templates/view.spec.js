@@ -1,5 +1,4 @@
-const { If } = require('../../../tests/helpers');
-const type = value => `<${value}>`;
+const { If, type } = require('../../../tests/helpers');
 module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) => `
 /* tslint:disable:no-unused-variable */
 /* 3rd party modules */

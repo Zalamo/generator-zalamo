@@ -2,7 +2,7 @@ const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { rex, rexAny, contentIf, If, generateConfigPermutation, config2services } = require('./helpers');
+const { rex, rexAny, contentIf, If, generateConfigPermutation, config2services, type } = require('./helpers');
 
 const generatorModulePath = join(__dirname, '../generators/component');
 const modulePath = 'src/app/test';
@@ -101,7 +101,7 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
   it('should create a typed variables for tests', () => {
     assert.fileContent(spec, rex`
       let component: TestItemComponent;
-      let fixture: ComponentFixture<TestItemComponent>;
+      let fixture: ComponentFixture${type('TestItemComponent')};
       let element: HTMLElement;
       let debug: DebugElement;
     `);

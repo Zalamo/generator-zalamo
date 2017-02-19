@@ -40,4 +40,6 @@ function config2services(config) {
       .map(key => key.substr(3))
 }
 
-module.exports = { docRegExp, rex, rexAny, contentIf, If, generateConfigPermutation, config2services };
+const type = value => `<${value}>`;
+
+module.exports = { docRegExp, rex, rexAny, contentIf, If, generateConfigPermutation, config2services, type };

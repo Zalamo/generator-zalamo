@@ -1,7 +1,7 @@
 const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const path = require('path');
-const { docRegExp, rex, contentIf, If } = require('./helpers');
+const { docRegExp, rex, contentIf, If, type } = require('./helpers');
 
 const generatorModulePath = path.join(__dirname, '../generators/module');
 const index = 'src/app/test/index.ts';
@@ -94,12 +94,12 @@ const describeSuite = (title, { samples }) => describe(title, () => {
     `);
   });
   it('should have properly named exported module class', () => {
-    assert.fileContent(index, /export class TestModule \{}/);
+    assert.fileContent(index, rex`export class TestModule {}`);
   });
   it('should export actions, reducer and router', () => {
-    assert.fileContent(index, /export \* from '\.\/test\.actions';/);
-    assert.fileContent(index, /export \* from '\.\/test\.reducer';/);
-    assert.fileContent(index, /export \* from '\.\/test\.router';/);
+    assert.fileContent(index, rex`export * from './test.actions';`);
+    assert.fileContent(index, rex`export * from './test.reducer';`);
+    assert.fileContent(index, rex`export * from './test.router';`);
   });
 
   it('should create an empty actions Injectable class with apollo service', () => {
@@ -168,7 +168,7 @@ const describeSuite = (title, { samples }) => describe(title, () => {
     assert.fileContent(spec, rex`
         export const mockTestActions = () => {
           const s = new Subject();
-          return <any>{
+          return ${type('any')}{
             // fetchTest: () => s,
           };
         };
@@ -211,9 +211,9 @@ const describeSuite = (title, { samples }) => describe(title, () => {
       //  */
       // @Injectable()
       // export class TestFromRoute {
-      //   constructor(private store: NgRedux<AppState>) {}
+      //   constructor(private store: NgRedux${type('AppState')}) {}
       //
-      //   fixParams(route: ActivatedRoute): Observable<Params> {
+      //   fixParams(route: ActivatedRoute): Observable${type('Params')} {
       //     return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
       //   }
       // }

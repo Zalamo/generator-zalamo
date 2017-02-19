@@ -6,9 +6,9 @@ import { <%= Module %>Actions } from '../<%= module %>.actions';<% } %>
 
 @Component({
   selector: '<%= module %>-<%= name %>-view',
-  template: `<% if (samples) { %>
-    <h1>Hello {{<%= module %>$ | async}}</h1>
-<% } %>`
+  template: `
+    <% if (samples) { %><h1>Hello {{<%= module %>$ | async}}</h1><% } %>
+  `
 })
 export class <%= Module %><%= Name %>View<% if (samples) { %> implements OnInit, OnDestroy<% } %> {<% if (samples) { %>
   <% if (useRedux) { %>@select() <% } %><%= module %>$: Observable<___>;
@@ -16,8 +16,7 @@ export class <%= Module %><%= Name %>View<% if (samples) { %> implements OnInit,
   private _sub: Subscription;
 <% } %><% if (useActions || useRouter) { %>
   constructor(<% if (useRouter) { %>private route: ActivatedRoute<% } %><% if (useActions && useRouter) { %>,
-              <% } %><% if (useActions) { %>public actions: <%= Module %>Actions<% } %>) {}
-
+              <% } %><% if (useActions) { %>public actions: <%= Module %>Actions<% } %>) {}<% } %><% if (samples) { %>
   ngOnInit(): void {}
   ngOnDestroy(): void {}
 <% } %>

@@ -158,6 +158,12 @@ describe('zalamo:component', () => {
     useRouter: false,
     sampleModule: 'index.ts.sample'
   });
+  describeSuite('samples: true, services: none', {
+    samples: true,
+    useActions: false,
+    useRouter: false,
+    sampleModule: 'index.ts.sample'
+  });
   describeSuite('samples: false, services: none (module has component)', {
     samples: false,
     useActions: false,

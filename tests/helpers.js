@@ -3,7 +3,7 @@ const concatTagChunks = (cs, v) => cs.reduce((r, c, i) => r + c + (i < v.length 
 const rex = (chunks, ...values) => new RegExp(
   concatTagChunks(chunks, values)
     .trim()
-    .replace(/([\[(){.*\\?])/g, "\\$1")
+    .replace(/([\[(){.*\\?$|])/g, "\\$1")
     .replace(/([\s][\s]+)|[\n]/g, "[\\s]*")
 );
 

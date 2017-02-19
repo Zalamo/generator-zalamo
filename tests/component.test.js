@@ -152,60 +152,26 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
 });
 
 describe('zalamo:component', () => {
-  describeSuite('samples: false, services: none', {
-    samples: false,
-    useActions: false,
-    useRouter: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: none', {
-    samples: true,
-    useActions: false,
-    useRouter: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: none (module has component)', {
-    samples: false,
-    useActions: false,
-    useRouter: false,
-    sampleModule: 'index2.ts.sample'
-  });
-
-  describeSuite('samples: false, services: Actions', {
-    samples: false,
-    useActions: true,
-    useRouter: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Router', {
-    samples: false,
-    useActions: false,
-    useRouter: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Actions, Router', {
-    samples: false,
-    useActions: true,
-    useRouter: true,
-    sampleModule: 'index.ts.sample'
-  });
-
-  describeSuite('samples: true, services: Actions', {
-    samples: true,
-    useActions: true,
-    useRouter: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Router', {
-    samples: true,
-    useActions: false,
-    useRouter: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Actions, Router', {
-    samples: true,
-    useActions: true,
-    useRouter: true,
-    sampleModule: 'index.ts.sample'
-  });
+  Array
+    .from({ length: 16 }, (v, i) => ({
+      samples: !!(i & 1),
+      useActions: !!(i & 2),
+      useRouter: !!(i & 4),
+      sampleModule: !!(i & 8)
+    }))
+    .map(config => {
+      config.sampleModule = config.sampleModule ? 'index.ts.sample' : 'index2.ts.sample';
+      return {
+        config,
+        title: `samples: ${config.samples}, services: ${
+        Object
+          .keys(config)
+          .filter(key => key.startsWith('use'))
+          .filter(key => config[ key ])
+          .map(key => key.substr(3))
+          .join(', ') || 'none'
+          }`
+      };
+    })
+    .forEach(({ title, config }) => describeSuite(title, config));
 });

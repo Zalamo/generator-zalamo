@@ -9,16 +9,10 @@ const modulePath = 'src/app/test';
 const view = `${modulePath}/views/item.view.ts`;
 const spec = `${modulePath}/views/item.view.spec.ts`;
 
-let tmpDir;
-
-const describeSuite = (title, { samples, useActions, useRouter, useRedux, sampleModule }) => describe(title, () => {
+const describeSuite = (title, { samples, useActions, useRouter, useRedux }) => describe(title, () => {
   before(() => helpers
     .run(generatorModulePath)
-    .inTmpDir(dir => {
-      tmpDir = dir;
-      console.log(dir);
-      return copySync(join(__dirname, 'assets', sampleModule), join(dir, modulePath, 'index.ts'));
-    })
+    .inTmpDir(dir => copySync(join(__dirname, 'assets', 'index.ts.sample'), join(dir, modulePath, 'index.ts')))
     .withArguments([ 'Test', 'Item' ])
     .withPrompts({
       description: 'This is the test doc', samples: samples, services: [
@@ -134,118 +128,23 @@ const describeSuite = (title, { samples, useActions, useRouter, useRedux, sample
 });
 
 describe('zalamo:view', () => {
-  describeSuite('samples: false, services: none', {
-    samples: false,
-    useActions: false,
-    useRouter: false,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: none', {
-    samples: true,
-    useActions: false,
-    useRouter: false,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-
-  describeSuite('samples: false, services: Actions', {
-    samples: false,
-    useActions: true,
-    useRouter: false,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Router', {
-    samples: false,
-    useActions: false,
-    useRouter: true,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Redux', {
-    samples: false,
-    useActions: false,
-    useRouter: true,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Actions, Router, Redux', {
-    samples: false,
-    useActions: true,
-    useRouter: true,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Actions, Router', {
-    samples: false,
-    useActions: true,
-    useRouter: true,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Actions, Redux', {
-    samples: false,
-    useActions: true,
-    useRouter: false,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: false, services: Router, Redux', {
-    samples: false,
-    useActions: false,
-    useRouter: true,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
-
-  describeSuite('samples: true, services: Actions', {
-    samples: true,
-    useActions: true,
-    useRouter: false,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Router', {
-    samples: true,
-    useActions: false,
-    useRouter: true,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Redux', {
-    samples: true,
-    useActions: false,
-    useRouter: true,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Actions, Router, Redux', {
-    samples: true,
-    useActions: true,
-    useRouter: true,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Actions, Router', {
-    samples: true,
-    useActions: true,
-    useRouter: true,
-    useRedux: false,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Actions, Redux', {
-    samples: true,
-    useActions: true,
-    useRouter: false,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
-  describeSuite('samples: true, services: Router, Redux', {
-    samples: true,
-    useActions: false,
-    useRouter: true,
-    useRedux: true,
-    sampleModule: 'index.ts.sample'
-  });
+  Array
+    .from({ length: 16 }, (v, i) => ({
+      samples: !!(i & 1),
+      useActions: !!(i & 2),
+      useRouter: !!(i & 4),
+      useRedux: !!(i & 8)
+    }))
+    .map(config => ({
+      config,
+      title: `samples: ${config.samples}, services: ${
+      Object
+        .keys(config)
+        .filter(key => key.startsWith('use'))
+        .filter(key => config[ key ])
+        .map(key => key.substr(3))
+        .join(', ') || 'none'
+        }`
+    }))
+    .forEach(({ title, config }) => describeSuite(title, config));
 });

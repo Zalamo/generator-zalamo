@@ -1,6 +1,6 @@
 const { If } = require('../../../tests/helpers');
-module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) => `
-import { Component${If(samples)`, OnInit, OnDestroy`} } from '@angular/core';${If(useRouter)`
+module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) =>
+  `import { Component${If(samples)`, OnInit, OnDestroy`} } from '@angular/core';${If(useRouter)`
 import { ActivatedRoute } from '@angular/router';`}${If(samples)`${If(useRedux)`
 import { select } from '@angular-redux/store';`}
 import { Observable, Subscription } from 'rxjs';`}${If(useActions)`

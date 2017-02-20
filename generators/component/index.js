@@ -41,6 +41,6 @@ module.exports = class Component extends ModuleUpdater {
 
   writing() {
     super.writing();
-    this._updateModule();
+    this._updateModule('declarations');
   }
 };

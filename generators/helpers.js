@@ -155,7 +155,7 @@ class ModuleUpdater extends Generator {
     });
   }
 
-  _updateModule() {
+  _updateModule(arrayName) {
     let { Name, Module } = this.options;
     let name = _.kebabCase(Name);
     let module = _.kebabCase(Module);
@@ -166,7 +166,7 @@ class ModuleUpdater extends Generator {
     let moduleConfigEnd = findClosing(moduleSrc, moduleConfigStart - 1, '()');
     let moduleConfig = moduleSrc.slice(moduleConfigStart + 1, moduleConfigEnd - 1).trim();
     let { oldSrc, newSrc } = split(moduleConfig, ',', true)
-      .filter(item => item.startsWith('declarations'))
+      .filter(item => item.startsWith(arrayName))
       .reduce((con, itm) => {
         let oldSrc = itm.slice(itm.indexOf('[') + 1, -1);
         let leadingWhitespace = oldSrc.match(/^(\s+)/)[ 0 ];
@@ -174,23 +174,32 @@ class ModuleUpdater extends Generator {
           oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}${_.capitalize(this.type)}$1`)
         };
       }, '');
+    moduleSrc = moduleSrc
+      .replace(`${arrayName}: [${oldSrc}]`, `${arrayName}: [${newSrc}]`);
 
+    moduleSrc = this._addImport(
+      moduleSrc,
+      `from './${this.type}s/`,
+      `import { ${Module}${Name}${_.capitalize(this.type)} } from './${this.type}s/${name}.${this.type}';`
+    );
+
+    this.fs.write(modulePath, moduleSrc);
+  }
+
+  _addImport(moduleSrc, target, newImport, category = `/* ${_.capitalize(this.type)}s */`) {
     let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
     let imports = moduleSrc.match(new RegExp(importPattern, 'g'));
 
-    let targetImports = imports.filter(item => item.includes(`from './${this.type}s/`));
-    let newImport = `import { ${Module}${Name}${_.capitalize(this.type)} } from './${this.type}s/${name}.${this.type}';`;
+    let targetImports = imports.filter(item => item.includes(target));
     let lastImport = (targetImports.length > 0 ? targetImports : imports).slice(-1)[ 0 ];
 
     moduleSrc = moduleSrc
-      .replace(`declarations: [${oldSrc}]`, `declarations: [${newSrc}]`)
       .replace(lastImport, [
         lastImport,
-        ...(targetImports.length === 0 ? [ '', `/* ${_.capitalize(this.type)}s */` ] : []),
+        ...(targetImports.length === 0 && category ? [ '', category ] : []),
         newImport
       ].join('\n'));
-
-    this.fs.write(modulePath, moduleSrc);
+    return moduleSrc;
   }
 }
 

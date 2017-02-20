@@ -1,6 +1,6 @@
 const { If } = require('../../../tests/helpers');
-module.exports = ({ samples, description, name, Name }) => `
-/* 3rd party modules */
+module.exports = ({ samples, description, name, Name }) =>
+  `/* 3rd party modules */
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgReduxModule } from '@angular-redux/store';

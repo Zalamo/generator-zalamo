@@ -1,6 +1,6 @@
 const { If, type } = require('../../../tests/helpers');
-module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) => `
-/* tslint:disable:no-unused-variable */
+module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) =>
+  `/* tslint:disable:no-unused-variable */
 /* 3rd party modules */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';

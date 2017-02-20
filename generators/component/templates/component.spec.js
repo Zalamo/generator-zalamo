@@ -1,7 +1,7 @@
-const { If } = require('../../../tests/helpers');
+const { If, type } = require('../../../tests/helpers');
 
-module.exports = ({samples, useActions, useRouter, Module, Name, module, name}) => `
-/* tslint:disable:no-unused-variable */
+module.exports = ({ samples, useActions, useRouter, Module, Name, module, name }) =>
+  `/* tslint:disable:no-unused-variable */
 /* 3rd party modules */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -20,7 +20,7 @@ import { ${Module}${Name}Component } from './${name}.component';
 describe('${Module}', () => {
   describe('${Module}${Name}Component', () => {
     let component: ${Module}${Name}Component;
-    let fixture: ComponentFixture<${Module}${Name}Component>;
+    let fixture: ComponentFixture${type(`${Module}${Name}Component`)};
     let element: HTMLElement;
     let debug: DebugElement;
 

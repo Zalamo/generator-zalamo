@@ -173,7 +173,7 @@ class ModuleUpdater extends Generator {
     before = before.replace(...escapeRegExp);
 
     return src.replace(
-      new RegExp(`(${method}\\${type}\\s+)${before}(\\s+\\${brackets[ 1 ]})`),
+      new RegExp(`(${method}\\${type}\\s*)${before}(\\s*\\${brackets[ 1 ]})`),
       `$1${after}$2`
     );
   }
@@ -187,7 +187,7 @@ class ModuleUpdater extends Generator {
 
     let { before, after } = this._staticAddItem(modulePart, entry, position);
 
-    return src.replace(new RegExp(`(${part}: \\[\\s+)${before}(\\s+\\])`), `$1${after}$2`);
+    return src.replace(new RegExp(`(${part}: \\[\\s*)${before}(\\s*\\])`), `$1${after}$2`);
   }
 
   _staticAddItem(array, entry, position) {

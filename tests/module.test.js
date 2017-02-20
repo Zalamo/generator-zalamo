@@ -198,8 +198,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   });
   it('should have an empty routes definition', () => {
     assert.fileContent(router, rex`
-      // Configure routes
-      const routes: Routes = [];
+      const routes: Routes = [
+        // Define routes here
+      ];
     `);
   });
   it('should have a router module importing router for child and exporting router', () => {

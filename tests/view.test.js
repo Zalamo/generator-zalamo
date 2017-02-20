@@ -12,13 +12,16 @@ const view = `${modulePath}/views/item.view.ts`;
 const spec = `${modulePath}/views/item.view.spec.ts`;
 
 const describeSuite = (title, config) => describe(title, () => {
-  const { samples, useActions, useRouter, useRedux } = config;
+  const { samples, useActions, useRouter, useRedux, addRoute, route = 'test/me' } = config;
   before(() => helpers
     .run(generatorModulePath)
-    .inTmpDir(dir => copySync(join(__dirname, 'assets', 'index.ts.sample'), join(dir, modulePath, 'index.ts')))
+    .inTmpDir(dir => {
+      copySync(join(__dirname, 'assets', 'index.ts.sample'), join(dir, modulePath, 'index.ts'));
+      copySync(join(__dirname, 'assets', 'router.ts.sample'), join(dir, modulePath, 'test.router.ts'));
+    })
     .withArguments([ 'Test', 'Item' ])
     .withPrompts({
-      description: 'This is the test doc', samples: samples, services: config2services(config)
+      description: 'This is the test doc', samples, addRoute, route, services: config2services(config)
     }));
 
   const ifSamples = If(samples);
@@ -44,7 +47,7 @@ const describeSuite = (title, config) => describe(title, () => {
     assert.fileContent(spec, rex`import { TestItemView } from './item.view';`);
   });
 
-  // module modifications
+  // module & router modifications
   it('should add view import to module', () => {
     assert.fileContent(`${modulePath}/index.ts`, rexAny([
       rex`
@@ -74,6 +77,24 @@ const describeSuite = (title, config) => describe(title, () => {
         ]
       `
     ]));
+  });
+  it('should only import view in router if `addRoute` is true', () => {
+    assert.fileContent(`${modulePath}/test.router.ts`, rex`
+      import { RouterModule, Routes } from '@angular/router';${If(addRoute)`
+      
+      /* Views */
+      import { TestItemView } from './views/item.view';`}
+
+      const routes: Routes = [
+    `);
+  });
+  it('should only add desired route to router if `addRoute` is true', () => {
+    assert.fileContent(`${modulePath}/test.router.ts`, rex`
+      const routes: Routes = [
+        // Define routes here${If(addRoute)`,
+        { path: '${route}', component: TestItemView, children: [] }`}
+      ];
+    `);
   });
 
   // view
@@ -127,10 +148,12 @@ const describeSuite = (title, config) => describe(title, () => {
 });
 
 describe('zalamo:view', () => {
-  generateConfigPermutation([ 'samples', 'useActions', 'useRouter', 'useRedux' ])
+  generateConfigPermutation([ 'samples', 'useActions', 'useRouter', 'useRedux', 'addRoute' ])
     .map(config => ({
       config,
-      title: `samples: ${config.samples}, services: ${config2services(config).join(', ') || 'none'}`
+      title: `samples: ${config.samples}, addRoute: ${config.addRoute}, services: ${
+        config2services(config).join(', ') || 'none'
+      }`
     }))
     .forEach(({ title, config }) => describeSuite(title, config));
 });

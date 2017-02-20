@@ -4,7 +4,7 @@ const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { docRegExp, rex, contentIf, If, type, generateConfigPermutation } = require('./helpers');
+const { docRegExp, rex, contentIf, If, type, generateConfigPermutation } = require('./../generators/helpers');
 
 const generatorModulePath = join(__dirname, '../generators/module');
 const appModulePath = 'src/app/app.module.ts';

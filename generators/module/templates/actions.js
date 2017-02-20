@@ -1,4 +1,4 @@
-const { If, type } = require('../../../tests/helpers');
+const { If, type } = require('../../helpers');
 module.exports = ({ samples, name, Name }) =>
   `/* 3rd party modules */
 import { Injectable } from '@angular/core';${If(samples)`

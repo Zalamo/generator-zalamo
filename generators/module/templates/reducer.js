@@ -1,4 +1,4 @@
-const { If } = require('../../../tests/helpers');
+const { If } = require('../../helpers');
 module.exports = ({ samples, description, name, Name }) =>
   `/* 3rd party modules */
 import { ApolloAction } from 'apollo-client/actions';

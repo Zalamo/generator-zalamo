@@ -1,4 +1,4 @@
-const { type } = require('../../../tests/helpers');
+const { type } = require('../../helpers');
 module.exports = ({ samples, description, name, Name }) =>
   `/* 3rd party modules */
 import { Subject } from 'rxjs';

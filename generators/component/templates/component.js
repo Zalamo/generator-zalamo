@@ -1,4 +1,4 @@
-const { If } = require('../../../tests/helpers');
+const { If } = require('../../helpers');
 
 module.exports = ({ samples, useActions, Module, Name, module, name }) =>
   `import { Component${If(samples)`, Input`} } from '@angular/core';${If(useActions)`

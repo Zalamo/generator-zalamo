@@ -1,4 +1,4 @@
-const { If } = require('../../../tests/helpers');
+const { If } = require('../../helpers');
 module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) =>
   `import { Component${If(samples)`, OnInit, OnDestroy`} } from '@angular/core';${If(useRouter)`
 import { ActivatedRoute } from '@angular/router';`}${If(samples)`${If(useRedux)`

@@ -1,9 +1,10 @@
 const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
-const path = require('path');
+const { join } = require('path');
+const { copySync } = require('fs-extra');
 const { docRegExp, rex, contentIf, If, type } = require('./helpers');
 
-const generatorModulePath = path.join(__dirname, '../generators/module');
+const generatorModulePath = join(__dirname, '../generators/module');
 const index = 'src/app/test/index.ts';
 const actions = 'src/app/test/test.actions.ts';
 const reducer = 'src/app/test/test.reducer.ts';
@@ -13,6 +14,7 @@ const spec = 'src/app/test/test.spec.ts';
 const describeSuite = (title, { samples }) => describe(title, () => {
   before(() => helpers
     .run(generatorModulePath)
+    .inTmpDir(dir => copySync(join(__dirname, 'assets', 'app.module.ts.sample'), join(dir, 'src/app', 'app.module.ts')))
     .withArguments([ 'Test' ])
     .withPrompts({ description: 'This is the test doc', samples }));
 
@@ -58,6 +60,11 @@ const describeSuite = (title, { samples }) => describe(title, () => {
     assert[ contentIf(samples) ](reducer, rex`
       /* Types */
       // import {  } from '../../../types';
+    `);
+  });
+  it('should add new module to app.module', () => {
+    assert.fileContent(`src/app/app.module.ts`, rex`
+      import { TestModule } from './test';
     `);
   });
   it('should document module', () => {

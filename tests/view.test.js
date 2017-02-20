@@ -1,3 +1,5 @@
+const { it, describe } = require('mocha');
+
 const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');

@@ -1,5 +1,6 @@
 const Generator = require('yeoman-generator');
 const _ = require('lodash');
+const { escapeRegExp }= require("../tests/helpers");
 
 /**
  * Find index of matching closing bracket
@@ -155,6 +156,28 @@ class ModuleUpdater extends Generator {
     });
   }
 
+  _addToMethodParams(src, method, entry, position) {
+    const bracketClosingMap = {
+      '(': '()',
+      '{': '{}',
+      '[': '[]'
+    };
+
+    const start = src.indexOf(method) + method.length;
+    const brackets = bracketClosingMap[ src[ start ] ];
+    const end = findClosing(src, start, brackets);
+
+    let { type, before, after } = this._staticAddItem(src.slice(start, end + 1), entry, position);
+
+    method = method.replace(...escapeRegExp);
+    before = before.replace(...escapeRegExp);
+
+    return src.replace(
+      new RegExp(`(${method}\\${type}\\s+)${before}(\\s+\\${brackets[ 1 ]})`),
+      `$1${after}$2`
+    );
+  }
+
   _addToNgModule(src, part, entry, position) {
     let start = src.indexOf('@NgModule(') + 10;
     let end = findClosing(src, start - 1, '()');
@@ -162,14 +185,14 @@ class ModuleUpdater extends Generator {
 
     const modulePart = split(configSrc, ',', true).find(item => item.startsWith(part));
 
-    let { before, after } = this._staticAddToArray(modulePart, entry, position);
+    let { before, after } = this._staticAddItem(modulePart, entry, position);
 
     return src.replace(new RegExp(`(${part}: \\[\\s+)${before}(\\s+\\])`), `$1${after}$2`);
   }
 
-  _staticAddToArray(array, entry, position) {
-    let leadingWhitespace = array.match(/\[(\s+)\S/)[ 1 ];
-    let before = array.slice(array.indexOf('[') + 1, -1).trim();
+  _staticAddItem(array, entry, position) {
+    let { 1: type, 2: leadingWhitespace } = array.match(/([\[{])(\s+)\S/) || [];
+    let before = array.slice(array.indexOf(type) + 1, -1).trim();
     let chunks = split(before, ',', true);
 
     if (typeof position === 'object' && (position.before || position.after)) {
@@ -180,7 +203,7 @@ class ModuleUpdater extends Generator {
       chunks.push(entry);
     }
 
-    return { before, after: chunks.join(`,${leadingWhitespace}`) };
+    return { type, before, after: chunks.join(`,${leadingWhitespace}`) };
   }
 
   _addImport(src, target, newImport, category = `/* ${_.capitalize(this.type)}s */`) {

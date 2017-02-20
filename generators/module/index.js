@@ -17,7 +17,8 @@ module.exports = class extends ModuleUpdater {
       ],
       prompts: [
         { type: 'input', name: 'description', message: 'Describe a module', default: 'TODO: Write a documentation' },
-        { type: 'confirm', name: 'samples', message: 'Insert sample code?', default: false }
+        { type: 'confirm', name: 'samples', message: 'Insert sample code?', default: false },
+        { type: 'confirm', name: 'registerReducer', message: 'Register reducer?', default: true }
       ]
     });
 
@@ -30,11 +31,35 @@ module.exports = class extends ModuleUpdater {
 
   writing() {
     super.writing();
-    this._updateModule()
+    this._updateModule();
+    if (this.props.registerReducer) {
+      this._updateStore();
+    }
+  }
+
+  _updateStore() {
+    let { Name } = this.options;
+    const ItemName = `${_.camelCase(Name)}Reducer`;
+    const kebabCasedName = _.kebabCase(Name);
+    const ItemPath = `../${kebabCasedName}/${kebabCasedName}.reducer`;
+
+    let modulePath = this.destinationPath(`src/app/core/store.ts`);
+    let src = this.fs.read(modulePath);
+
+    src = this._addImport(src, `.reducer';`, `import { ${ItemName} } from '${ItemPath}';`, `/* Reducers */`);
+
+    src = this._addToMethodParams(
+      src,
+      'combineReducers<AppState>(',
+      `${kebabCasedName}: ${ItemName}`,
+      { before: /routerReducer/ }
+    );
+
+    this.fs.write(modulePath, src);
   }
 
   _updateModule() {
-    let { Name, Module } = this.options;
+    let { Name } = this.options;
     const ItemName = `${Name}Module`;
     const ItemPath = `./${_.kebabCase(Name)}`;
 

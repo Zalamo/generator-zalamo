@@ -1,23 +1,29 @@
+const { it, describe } = require('mocha');
+
 const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { docRegExp, rex, contentIf, If, type } = require('./helpers');
+const { docRegExp, rex, contentIf, If, type, generateConfigPermutation } = require('./helpers');
 
 const generatorModulePath = join(__dirname, '../generators/module');
 const appModulePath = 'src/app/app.module.ts';
+const storePath = 'src/app/core/store.ts';
 const index = 'src/app/test/index.ts';
 const actions = 'src/app/test/test.actions.ts';
 const reducer = 'src/app/test/test.reducer.ts';
 const router = 'src/app/test/test.router.ts';
 const spec = 'src/app/test/test.spec.ts';
 
-const describeSuite = (title, { samples }) => describe(title, () => {
+const describeSuite = (title, { samples, registerReducer }) => describe(title, () => {
   before(() => helpers
     .run(generatorModulePath)
-    .inTmpDir(dir => copySync(join(__dirname, 'assets', 'app.module.ts.sample'), join(dir, 'src/app', 'app.module.ts')))
+    .inTmpDir(dir => {
+      copySync(join(__dirname, 'assets', 'app.module.ts.sample'), join(dir, 'src/app', 'app.module.ts'));
+      copySync(join(__dirname, 'assets', 'store.ts.sample'), join(dir, 'src/app/core', 'store.ts'));
+    })
     .withArguments([ 'Test' ])
-    .withPrompts({ description: 'This is the test doc', samples }));
+    .withPrompts({ description: 'This is the test doc', samples, registerReducer }));
 
   it('should have proper files structure', () => {
     assert.file(index);
@@ -78,6 +84,27 @@ const describeSuite = (title, { samples }) => describe(title, () => {
         TestModule,
         BaseRoutesModule
       ]
+    `);
+  });
+  it('should only import reducer in store if `registerReducer` is true', () => {
+    assert.fileContent(storePath, rex`
+      /* Reducers */
+      import { counterReducer } from '../counter/counter.reducer';
+      import { postsReducer } from '../posts/posts.reducer';${If(registerReducer)`
+      import { testReducer } from '../test/test.reducer';`}
+      
+      export const client
+    `);
+  });
+  it('should only add reducer to store under camelCased module name if `registerReducer` is true', () => {
+    assert.fileContent(storePath, rex`
+      combineReducers${type('AppState')}({
+        counter: counterReducer,
+        posts: postsReducer,${If(registerReducer)`
+        test: testReducer,`}
+        router: routerReducer,
+        apollo: client.reducer() as Reducer${type('Action')}
+      })
     `);
   });
   it('should document module', () => {
@@ -242,6 +269,7 @@ const describeSuite = (title, { samples }) => describe(title, () => {
 });
 
 describe('zalamo:module', () => {
-  describeSuite('samples: false', { samples: false });
-  describeSuite('samples: true', { samples: true });
+  generateConfigPermutation([ 'samples', 'registerReducer' ])
+    .map(config => ({ config, title: JSON.stringify(config) }))
+    .forEach(({ title, config }) => describeSuite(title, config));
 });

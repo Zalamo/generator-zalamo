@@ -32,6 +32,7 @@ module.exports = class extends ModuleUpdater {
     super.writing();
     this._updateModule()
   }
+
   _updateModule() {
     let { Name, Module } = this.options;
     const ItemName = `${Name}Module`;
@@ -40,7 +41,7 @@ module.exports = class extends ModuleUpdater {
     let modulePath = this.destinationPath(`src/app/app.module.ts`);
     let src = this.fs.read(modulePath);
 
-    src = this._addToNgModule(src, 'imports', ItemName);
+    src = this._addToNgModule(src, 'imports', ItemName, { before: /BaseRoutesModule/ });
     src = this._addImport(src, null, `import { ${ItemName} } from '${ItemPath}';`, null);
 
     this.fs.write(modulePath, src);

@@ -155,21 +155,32 @@ class ModuleUpdater extends Generator {
     });
   }
 
-  _addToNgModule(src, part, entry) {
+  _addToNgModule(src, part, entry, position) {
     let start = src.indexOf('@NgModule(') + 10;
     let end = findClosing(src, start - 1, '()');
     let configSrc = src.slice(start + 1, end - 1).trim();
-    let { oldSrc, newSrc } = split(configSrc, ',', true)
-      .filter(item => item.startsWith(part))
-      .reduce((con, itm) => {
-        let oldSrc = itm.slice(itm.indexOf('[') + 1, -1);
-        let leadingWhitespace = oldSrc.match(/^(\s+)/)[ 0 ];
-        return {
-          oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${entry}$1`)
-        };
-      }, '');
 
-    return src.replace(`${part}: [${oldSrc}]`, `${part}: [${newSrc}]`);
+    const modulePart = split(configSrc, ',', true).find(item => item.startsWith(part));
+
+    let { before, after } = this._staticAddToArray(modulePart, entry, position);
+
+    return src.replace(new RegExp(`(${part}: \\[\\s+)${before}(\\s+\\])`), `$1${after}$2`);
+  }
+
+  _staticAddToArray(array, entry, position) {
+    let leadingWhitespace = array.match(/\[(\s+)\S/)[ 1 ];
+    let before = array.slice(array.indexOf('[') + 1, -1).trim();
+    let chunks = split(before, ',', true);
+
+    if (typeof position === 'object' && (position.before || position.after)) {
+      chunks.splice(chunks.findIndex(chunk => (position.before || position.after).test(chunk)), 0, entry);
+    } else if (typeof position === 'number') {
+      chunks.splice(position, 0, entry);
+    } else {
+      chunks.push(entry);
+    }
+
+    return { before, after: chunks.join(`,${leadingWhitespace}`) };
   }
 
   _addImport(src, target, newImport, category = `/* ${_.capitalize(this.type)}s */`) {

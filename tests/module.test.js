@@ -5,6 +5,7 @@ const { copySync } = require('fs-extra');
 const { docRegExp, rex, contentIf, If, type } = require('./helpers');
 
 const generatorModulePath = join(__dirname, '../generators/module');
+const appModulePath = 'src/app/app.module.ts';
 const index = 'src/app/test/index.ts';
 const actions = 'src/app/test/test.actions.ts';
 const reducer = 'src/app/test/test.reducer.ts';
@@ -62,9 +63,21 @@ const describeSuite = (title, { samples }) => describe(title, () => {
       // import {  } from '../../../types';
     `);
   });
-  it('should add new module to app.module', () => {
-    assert.fileContent(`src/app/app.module.ts`, rex`
+  it('should import new module in app.module', () => {
+    assert.fileContent(appModulePath, rex`
       import { TestModule } from './test';
+    `);
+  });
+  it('should add new module to imports section in app.module BEFORE last router', () => {
+    assert.fileContent(appModulePath, rex`
+      imports: [
+        BrowserModule,
+        FormsModule,
+        HttpModule,
+        StoreModule,
+        TestModule,
+        BaseRoutesModule
+      ]
     `);
   });
   it('should document module', () => {

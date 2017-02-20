@@ -1,5 +1,6 @@
 'use strict';
 const chalk = require('chalk');
+const _ = require('lodash');
 const { ModuleUpdater } = require('../helpers');
 
 module.exports = class Component extends ModuleUpdater {
@@ -41,6 +42,20 @@ module.exports = class Component extends ModuleUpdater {
 
   writing() {
     super.writing();
-    this._updateModule('declarations');
+    this._updateModule();
+  }
+
+  _updateModule() {
+    let { Name, Module } = this.options;
+    const ItemName = `${Module}${Name}${_.capitalize(this.type)}`;
+    const ItemPath = `${this.type}s/${_.kebabCase(Name)}.${this.type}`;
+
+    let modulePath = this.destinationPath(`src/app/${_.kebabCase(Module)}/index.ts`);
+    let src = this.fs.read(modulePath);
+
+    src = this._addToNgModule(src, 'declarations', ItemName);
+    src = this._addImport(src, `from './${this.type}s/`, `import { ${ItemName} } from './${ItemPath}';`);
+
+    this.fs.write(modulePath, src);
   }
 };

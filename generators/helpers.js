@@ -155,51 +155,36 @@ class ModuleUpdater extends Generator {
     });
   }
 
-  _updateModule(arrayName) {
-    let { Name, Module } = this.options;
-    let name = _.kebabCase(Name);
-    let module = _.kebabCase(Module);
-
-    let modulePath = this.destinationPath(`src/app/${module}/index.ts`);
-    let moduleSrc = this.fs.read(modulePath);
-    let moduleConfigStart = moduleSrc.indexOf('@NgModule(') + 10;
-    let moduleConfigEnd = findClosing(moduleSrc, moduleConfigStart - 1, '()');
-    let moduleConfig = moduleSrc.slice(moduleConfigStart + 1, moduleConfigEnd - 1).trim();
-    let { oldSrc, newSrc } = split(moduleConfig, ',', true)
-      .filter(item => item.startsWith(arrayName))
+  _addToNgModule(src, part, entry) {
+    let start = src.indexOf('@NgModule(') + 10;
+    let end = findClosing(src, start - 1, '()');
+    let configSrc = src.slice(start + 1, end - 1).trim();
+    let { oldSrc, newSrc } = split(configSrc, ',', true)
+      .filter(item => item.startsWith(part))
       .reduce((con, itm) => {
         let oldSrc = itm.slice(itm.indexOf('[') + 1, -1);
         let leadingWhitespace = oldSrc.match(/^(\s+)/)[ 0 ];
         return {
-          oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${Module}${Name}${_.capitalize(this.type)}$1`)
+          oldSrc, newSrc: oldSrc.replace(/(\s+)$/, `,${leadingWhitespace}${entry}$1`)
         };
       }, '');
-    moduleSrc = moduleSrc
-      .replace(`${arrayName}: [${oldSrc}]`, `${arrayName}: [${newSrc}]`);
 
-    moduleSrc = this._addImport(
-      moduleSrc,
-      `from './${this.type}s/`,
-      `import { ${Module}${Name}${_.capitalize(this.type)} } from './${this.type}s/${name}.${this.type}';`
-    );
-
-    this.fs.write(modulePath, moduleSrc);
+    return src.replace(`${part}: [${oldSrc}]`, `${part}: [${newSrc}]`);
   }
 
-  _addImport(moduleSrc, target, newImport, category = `/* ${_.capitalize(this.type)}s */`) {
+  _addImport(src, target, newImport, category = `/* ${_.capitalize(this.type)}s */`) {
     let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
-    let imports = moduleSrc.match(new RegExp(importPattern, 'g'));
+    let imports = src.match(new RegExp(importPattern, 'g'));
 
-    let targetImports = imports.filter(item => item.includes(target));
+    let targetImports = target ? imports.filter(item => item.includes(target)) : [];
     let lastImport = (targetImports.length > 0 ? targetImports : imports).slice(-1)[ 0 ];
 
-    moduleSrc = moduleSrc
+    return src
       .replace(lastImport, [
         lastImport,
         ...(targetImports.length === 0 && category ? [ '', category ] : []),
         newImport
       ].join('\n'));
-    return moduleSrc;
   }
 }
 

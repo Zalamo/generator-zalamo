@@ -1,6 +1,6 @@
 {
   "name": "generator-zalamo",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Generate zalamo specific components",
   "homepage": "",
   "author": {
@@ -13,7 +13,6 @@
   ],
   "main": "generators/index.js",
   "keywords": [
-    "",
     "yeoman-generator"
   ],
   "dependencies": {
@@ -22,12 +21,7 @@
     "yeoman-generator": "^1.0.0",
     "yosay": "^1.2.1"
   },
-  "repository": "Draccoz/generator-zalamo",
-  "scripts": {
-    "prepublish": "gulp prepublish",
-    "test": "gulp"
-  },
-  "private": true,
+  "repository": "Zalamo/generator-zalamo",
   "devDependencies": {
     "fs-extra": "^2.0.0",
     "mocha": "^3.2.0",

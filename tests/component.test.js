@@ -7,7 +7,7 @@ const { copySync } = require('fs-extra');
 const { rex, rexAny, contentIf, If, generateConfigPermutation, config2services, type } = require('./../generators/helpers');
 
 const generatorModulePath = join(__dirname, '../generators/component');
-const modulePath = 'src/app/test';
+const modulePath = 'src/app/+test';
 const component = `${modulePath}/components/item.component.ts`;
 const spec = `${modulePath}/components/item.component.spec.ts`;
 

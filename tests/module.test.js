@@ -7,19 +7,19 @@ const { copySync } = require('fs-extra');
 const { docRegExp, rex, contentIf, If, type, generateConfigPermutation } = require('./../generators/helpers');
 
 const generatorModulePath = join(__dirname, '../generators/module');
-const appModulePath = 'src/app/app.module.ts';
+const appModulePath = 'src/app/index.ts';
 const storePath = 'src/app/core/store.ts';
-const index = 'src/app/test/index.ts';
-const actions = 'src/app/test/test.actions.ts';
-const reducer = 'src/app/test/test.reducer.ts';
-const router = 'src/app/test/test.router.ts';
-const spec = 'src/app/test/test.spec.ts';
+const index = 'src/app/+test/index.ts';
+const actions = 'src/app/+test/test.actions.ts';
+const reducer = 'src/app/+test/test.reducer.ts';
+const router = 'src/app/+test/test.router.ts';
+const spec = 'src/app/+test/test.spec.ts';
 
 const describeSuite = (title, { samples, registerReducer }) => describe(title, () => {
   before(() => helpers
     .run(generatorModulePath)
     .inTmpDir(dir => {
-      copySync(join(__dirname, 'assets', 'app.module.ts.sample'), join(dir, 'src/app', 'app.module.ts'));
+      copySync(join(__dirname, 'assets', 'app.module.ts.sample'), join(dir, 'src/app', 'index.ts'));
       copySync(join(__dirname, 'assets', 'store.ts.sample'), join(dir, 'src/app/core', 'store.ts'));
     })
     .withArguments([ 'Test' ])
@@ -69,12 +69,12 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       // import {  } from '../../../types';
     `);
   });
-  it('should import new module in app.module', () => {
+  it('should import new module in index', () => {
     assert.fileContent(appModulePath, rex`
-      import { TestModule } from './test';
+      import { TestModule } from './+test';
     `);
   });
-  it('should add new module to imports section in app.module BEFORE last router', () => {
+  it('should add new module to imports section in index BEFORE last router', () => {
     assert.fileContent(appModulePath, rex`
       imports: [
         BrowserModule,
@@ -91,7 +91,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       /* Reducers */
       import { counterReducer } from '../counter/counter.reducer';
       import { postsReducer } from '../posts/posts.reducer';${If(registerReducer)`
-      import { testReducer } from '../test/test.reducer';`}
+      import { testReducer } from '../+test/test.reducer';`}
       
       export const client
     `);

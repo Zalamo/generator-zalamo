@@ -149,7 +149,7 @@ class ModuleUpdater extends Generator {
       let tpl = require(this.templatePath(file));
 
       this.fs.write(
-        this.destinationPath(`src/app/${module}${this.type ? `/${this.type}s/` : `/${name}/` }${fileName}.ts`),
+        this.destinationPath(`src/app/+${module || name}${this.type ? `/${this.type}s/` : '/' }${fileName}.ts`),
         tpl(Object.assign({ Name, name, Module, module }, this.props))
       );
     });
@@ -223,7 +223,7 @@ class ModuleUpdater extends Generator {
 
 const concatTagChunks = (cs, v) => cs.reduce((r, c, i) => r + c + (i < v.length ? v[ i ] : ''), '');
 
-const escapeRegExp = [ /([\[(){.*\\?$|])/g, '\\$1' ];
+const escapeRegExp = [ /([\[(){.*\\?$|+])/g, '\\$1' ];
 
 const rex = (chunks, ...values) => new RegExp(
   concatTagChunks(chunks, values)

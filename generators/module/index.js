@@ -41,7 +41,7 @@ module.exports = class extends ModuleUpdater {
     let { Name } = this.options;
     const ItemName = `${_.camelCase(Name)}Reducer`;
     const kebabCasedName = _.kebabCase(Name);
-    const ItemPath = `../${kebabCasedName}/${kebabCasedName}.reducer`;
+    const ItemPath = `../+${kebabCasedName}/${kebabCasedName}.reducer`;
 
     let modulePath = this.destinationPath(`src/app/core/store.ts`);
     let src = this.fs.read(modulePath);
@@ -61,9 +61,9 @@ module.exports = class extends ModuleUpdater {
   _updateModule() {
     let { Name } = this.options;
     const ItemName = `${Name}Module`;
-    const ItemPath = `./${_.kebabCase(Name)}`;
+    const ItemPath = `./+${_.kebabCase(Name)}`;
 
-    let modulePath = this.destinationPath(`src/app/app.module.ts`);
+    let modulePath = this.destinationPath(`src/app/index.ts`);
     let src = this.fs.read(modulePath);
 
     src = this._addToNgModule(src, 'imports', ItemName, { before: /BaseRoutesModule/ });

@@ -50,7 +50,7 @@ module.exports = class Component extends ModuleUpdater {
     const ItemName = `${Module}${Name}${_.capitalize(this.type)}`;
     const ItemPath = `${this.type}s/${_.kebabCase(Name)}.${this.type}`;
 
-    let modulePath = this.destinationPath(`src/app/${_.kebabCase(Module)}/index.ts`);
+    let modulePath = this.destinationPath(`src/app/+${_.kebabCase(Module)}/index.ts`);
     let src = this.fs.read(modulePath);
 
     src = this._addToNgModule(src, 'declarations', ItemName);

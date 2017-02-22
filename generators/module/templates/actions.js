@@ -21,23 +21,16 @@ import gql from 'graphql-tag';
  */
 @Injectable()
 export class ${Name}Actions {
-  constructor(private apollo: Apollo) {}${If(samples)`
+  constructor(private apollo: Apollo${If(samples)`,
+              private store: NgRedux${type('AppState')}`}) {}${If(samples)`
 
-    // public fetch${Name}(): ApolloQuery<__QUERY_TYPE__.Result> {
-    //   return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
-    //     .watchQuery({ query: __FETCH_QUERY__ });
-    // }`}
-  }${If(samples)`
+  // public fetch${Name}(): ApolloQuery<__QUERY_TYPE__.Result> {
+  //   return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
+  //     .watchQuery({ query: __FETCH_QUERY__ });
+  // }
 
-// /**
-//  * Get ${Name} by route param
-//  */
-// @Injectable()
-// export class ${Name}FromRoute {
-//   constructor(private store: NgRedux${type('AppState')}) {}
-//
-//   public fixParams(route: ActivatedRoute): Observable${type('Params')} {
-//     return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
-//   }
-// }`}
+  // public fixParams(route: ActivatedRoute): Observable${type('Params')} {
+  //   return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
+  // }`}
+}
 `;

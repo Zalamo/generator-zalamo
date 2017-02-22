@@ -156,6 +156,9 @@ class ModuleUpdater extends Generator {
   }
 
   _addToMethodParams(src, method, entry, position) {
+    if (src.includes(entry)) {
+      return src;
+    }
     const bracketClosingMap = {
       '(': '()',
       '{': '{}',
@@ -178,6 +181,9 @@ class ModuleUpdater extends Generator {
   }
 
   _addToNgModule(src, part, entry, position) {
+    if (src.includes(entry)) {
+      return src;
+    }
     let start = src.indexOf('@NgModule(') + 10;
     let end = findClosing(src, start - 1, '()');
     let configSrc = src.slice(start + 1, end - 1).trim();
@@ -189,9 +195,12 @@ class ModuleUpdater extends Generator {
     return src.replace(new RegExp(`(${part}: \\[\\s*)${before}(\\s*\\])`), `$1${after}$2`);
   }
 
-  _staticAddItem(array, entry, position) {
-    let { 1: type, 2: leadingWhitespace } = array.match(/([\[{])(\s+)\S/) || [];
-    let before = array.slice(array.indexOf(type) + 1, -1).trim();
+  _staticAddItem(src, entry, position) {
+    if (src.includes(entry)) {
+      return src;
+    }
+    let { 1: type, 2: leadingWhitespace } = src.match(/([\[{])(\s+)\S/) || [];
+    let before = src.slice(src.indexOf(type) + 1, -1).trim();
     let chunks = split(before, ',', true);
 
     if (typeof position === 'object' && (position.before || position.after)) {
@@ -205,7 +214,10 @@ class ModuleUpdater extends Generator {
     return { type, before, after: chunks.join(`,${leadingWhitespace}`) };
   }
 
-  _addImport(src, target, newImport, category = `/* ${_.capitalize(this.type)}s */`) {
+  _addImport(src, target, entry, category = `/* ${_.capitalize(this.type)}s */`) {
+    if (src.includes(entry)) {
+      return src;
+    }
     let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
     let imports = src.match(new RegExp(importPattern, 'g'));
 
@@ -216,7 +228,7 @@ class ModuleUpdater extends Generator {
       .replace(lastImport, [
         lastImport,
         ...(targetImports.length === 0 && category ? [ '', category ] : []),
-        newImport
+        entry
       ].join('\n'));
   }
 }

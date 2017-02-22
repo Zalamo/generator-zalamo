@@ -54,7 +54,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(spec, rex`import { TestActions } from './test.actions';`);
     assert.fileContent(spec, rex`import { testReducer } from './test.reducer';`);
 
-    assert.fileContent(index, rex`import { TestActions${If(samples)`/*, TestFromRoute*/`} } from './test.actions';`);
+    assert.fileContent(index, rex`import { TestActions } from './test.actions';`);
 
     assert[ contentIf(samples) ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
     assert[ contentIf(samples) ](actions, rex`import { NgRedux } from '@angular-redux/store';`);
@@ -77,7 +77,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   it('should add new module to imports section in index BEFORE last router', () => {
     assert.fileContent(appModulePath, rex`
       imports: [
-        // Angular modules
+        // import Angular’s modules
         BrowserModule,
         FormsModule,
         HttpModule,
@@ -132,7 +132,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     `);
     assert.fileContent(index, rex`
       providers: [
-        TestActions${If(samples)`// ,\n// TestFromRoute`}
+        TestActions
       ]
     `);
     assert.fileContent(index, rex`
@@ -154,11 +154,16 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`
       @Injectable()
       export class TestActions {
-        constructor(private apollo: Apollo) {}
+        constructor(private apollo: Apollo${If(samples)`,
+                    private store: NgRedux${type('AppState')}`}) {}
         ${If(samples)`
         // public fetchTest(): ApolloQuery<__QUERY_TYPE__.Result> {
         //   return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
         //     .watchQuery({ query: __FETCH_QUERY__ });
+        // }
+        
+        // public fixParams(route: ActivatedRoute): Observable${type('Params')} {
+        //   return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
         // }
         `}
       }
@@ -192,6 +197,8 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
         //      }
         //      break;
         `}
+            default:
+              break;
         }
         return state;
       }
@@ -217,7 +224,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(spec, rex`
         export const mockTestActions = () => {
           const s = new Subject();
-          return ${type('any')}{
+          return ${type('any')} {
             // fetchTest: () => s,
           };
         };
@@ -253,19 +260,6 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       //   query __FETCH_QUERY__ {
       //
       //   }\`;
-    `);
-    assert[ contentIf(samples) ](actions, rex`
-      // /**
-      //  * Get Test by route param
-      //  */
-      // @Injectable()
-      // export class TestFromRoute {
-      //   constructor(private store: NgRedux${type('AppState')}) {}
-      //
-      //   public fixParams(route: ActivatedRoute): Observable${type('Params')} {
-      //     return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
-      //   }
-      // }
     `);
   });
 });

@@ -10,7 +10,7 @@ import { AppCommonModule } from '../common';
 import { ProvidedApolloModule } from '../core/store';
 
 /* ${Name} module pieces */
-import { ${Name}Actions${If(samples)`/*, ${Name}FromRoute*/`} } from './${name}.actions';
+import { ${Name}Actions } from './${name}.actions';
 import { ${Name}RoutingModule } from './${name}.router';
 
 /**
@@ -28,8 +28,7 @@ import { ${Name}RoutingModule } from './${name}.router';
     // Views & Components placeholder
   ],
   providers: [
-    ${Name}Actions${If(samples)`// ,
-    // ${Name}FromRoute`}
+    ${Name}Actions
   ],
   exports: [
     ${Name}RoutingModule

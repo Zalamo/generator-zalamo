@@ -41,6 +41,8 @@ export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
 //        state = _.cloneDeep(state);
 //      }
 //      break;`}
+      default:
+        break;
   }
   return state;
 }

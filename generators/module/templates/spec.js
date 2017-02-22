@@ -15,7 +15,7 @@ import { ${name}Reducer } from './${name}.reducer';
  */
 export const mock${Name}Actions = () => {
   const s = new Subject();
-  return ${type('any')}{
+  return ${type('any')} {
     // fetch${Name}: () => s,
   };
 };

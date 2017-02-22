@@ -116,8 +116,8 @@ const describeSuite = (title, config) => describe(title, () => {
         ${If(useActions && useRouter)`constructor(private route: ActivatedRoute,
                                                   public actions: TestActions) {}` }
         ${If(samples)`
-          ngOnInit(): void {}
-          ngOnDestroy(): void {}
+          public ngOnInit(): void {/* */}
+          public ngOnDestroy(): void {/* */}
         `}
       }
     `);

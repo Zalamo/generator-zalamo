@@ -19,7 +19,7 @@ export class ${Module}${Name}View${If(samples)` implements OnInit, OnDestroy`} {
 
   constructor(${If(useRouter)`private route: ActivatedRoute${If(useActions)`,
               `}`}${If(useActions)`public actions: ${Module}Actions`}) {}`}${If(samples)`
-  ngOnInit(): void {}
-  ngOnDestroy(): void {}
+  public ngOnInit(): void {/* */}
+  public ngOnDestroy(): void {/* */}
 `}}
 `;

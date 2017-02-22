@@ -8,8 +8,8 @@ const routes: Routes = [
 ];
 
 /**
-* Routes for ${Name} module
-*/
+ * Routes for ${Name} module
+ */
 @NgModule({
   imports: [ RouterModule.forChild(routes) ],
   exports: [ RouterModule ]

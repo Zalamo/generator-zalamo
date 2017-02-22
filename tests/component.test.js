@@ -87,7 +87,7 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
         \`
       })
       export class TestItemComponent {
-        ${ifSamples`@Input() me = 'world';`}
+        ${ifSamples`@Input() public me = 'world';`}
         ${ifActions`constructor(public actions: TestActions) {}` }
       }
     `);

@@ -10,6 +10,7 @@ import { StoreModule } from './core/store';
 
 @NgModule({
   imports: [
+    // Angular modules
     BrowserModule,
     FormsModule,
     HttpModule,

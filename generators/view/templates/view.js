@@ -13,7 +13,7 @@ import { ${Module}Actions } from '../${module}.actions';`}
   \`
 })
 export class ${Module}${Name}View${If(samples)` implements OnInit, OnDestroy`} {${If(samples)`
-  ${If(useRedux)`@select() `}${module}$: Observable<___>;
+  ${If(useRedux)`@select() `}public ${module}$: Observable<___>;
 
   private _sub: Subscription;`}${If(useActions || useRouter)`
 

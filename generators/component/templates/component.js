@@ -11,7 +11,7 @@ import { ${Module}Actions } from '../${module}.actions';`}
   \`
 })
 export class ${Module}${Name}Component {${If(samples)`
-  @Input() me = 'world';`}${If(useActions)`
+  @Input() public me = 'world';`}${If(useActions)`
   constructor(public actions: ${Module}Actions) {}
 `}}
 `;

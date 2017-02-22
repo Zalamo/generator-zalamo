@@ -23,7 +23,7 @@ import gql from 'graphql-tag';
 export class ${Name}Actions {
   constructor(private apollo: Apollo) {}${If(samples)`
 
-    // fetch${Name}(): ApolloQuery<__QUERY_TYPE__.Result> {
+    // public fetch${Name}(): ApolloQuery<__QUERY_TYPE__.Result> {
     //   return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
     //     .watchQuery({ query: __FETCH_QUERY__ });
     // }`}
@@ -36,7 +36,7 @@ export class ${Name}Actions {
 // export class ${Name}FromRoute {
 //   constructor(private store: NgRedux${type('AppState')}) {}
 //
-//   fixParams(route: ActivatedRoute): Observable${type('Params')} {
+//   public fixParams(route: ActivatedRoute): Observable${type('Params')} {
 //     return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
 //   }
 // }`}

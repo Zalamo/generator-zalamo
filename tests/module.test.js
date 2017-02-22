@@ -77,6 +77,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   it('should add new module to imports section in index BEFORE last router', () => {
     assert.fileContent(appModulePath, rex`
       imports: [
+        // Angular modules
         BrowserModule,
         FormsModule,
         HttpModule,
@@ -155,7 +156,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       export class TestActions {
         constructor(private apollo: Apollo) {}
         ${If(samples)`
-        // fetchTest(): ApolloQuery<__QUERY_TYPE__.Result> {
+        // public fetchTest(): ApolloQuery<__QUERY_TYPE__.Result> {
         //   return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
         //     .watchQuery({ query: __FETCH_QUERY__ });
         // }
@@ -261,7 +262,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       // export class TestFromRoute {
       //   constructor(private store: NgRedux${type('AppState')}) {}
       //
-      //   fixParams(route: ActivatedRoute): Observable${type('Params')} {
+      //   public fixParams(route: ActivatedRoute): Observable${type('Params')} {
       //     return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
       //   }
       // }

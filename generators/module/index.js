@@ -26,6 +26,7 @@ module.exports = class extends ModuleUpdater {
   }
 
   prompting() {
+    this.log(yosay('Yo! Add e2e tests and encapsulation!'));
     return super.prompting();
   }
 

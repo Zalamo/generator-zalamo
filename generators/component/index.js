@@ -1,6 +1,7 @@
 'use strict';
 const chalk = require('chalk');
 const _ = require('lodash');
+const yosay = require("yosay");
 const { ModuleUpdater } = require('../helpers');
 
 module.exports = class Component extends ModuleUpdater {
@@ -28,6 +29,7 @@ module.exports = class Component extends ModuleUpdater {
   }
 
   prompting() {
+    this.log(yosay('Yo! Add encapsulation!'));
     return super.prompting()
       .then((props) => {
         let services = props.services || [];

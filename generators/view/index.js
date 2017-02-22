@@ -1,5 +1,6 @@
 'use strict';
 const Component = require('../component/index');
+const yosay = require('yosay');
 const { kebabCase } = require('lodash');
 
 module.exports = class View extends Component {
@@ -20,6 +21,7 @@ module.exports = class View extends Component {
   }
 
   prompting() {
+    this.log(yosay('Yo! Add encapsulation!'));
     return super.prompting();
   }
 

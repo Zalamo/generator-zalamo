@@ -10,37 +10,35 @@ import { apolloOperationName } from '../common';${If(samples)`
 // import {  } from '../../../types';`}
 
 // TODO: update INITIAL_STATE type
-const INITIAL_STATE: Array<___> = [];
+export const INITIAL_STATE = {${If(samples)`
+  itemsList: [],
+  currentItemId: 0
+`}};
 
 // Note: Remember to use \`apolloOperationName\` to check the query name
+
+/**
+ * Reducer actions enum (for Intellij IDEs hinting)
+ */
+declare enum ${Name}ReducerActions {${If(samples)`
+  ABOUT_SET_CURRENT
+`}}
 
 /**
  * Reducer for ${Name} module
  */
 export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
   switch (action.type) {${If(samples)`
-//    case 'APOLLO_QUERY_INIT':
-//      break;
-//    case 'APOLLO_QUERY_RESULT':
-//      if (apolloOperationName(action) === 'actionName') {
-//        return action.result.data;
-//      }
-//      break;
-//    case 'APOLLO_QUERY_RESULT_CLIENT':
-//      if (apolloOperationName(action) === 'actionName') {
-//        return action.result.data;
-//      }
-//      break;
-//    case 'APOLLO_MUTATION_INIT':
-//      if (apolloOperationName(action) === 'actionName') {
-//        state = _.cloneDeep(state);
-//      }
-//      break;
-//    case 'APOLLO_MUTATION_RESULT':
-//      if (apolloOperationName(action) === 'actionName') {
-//        state = _.cloneDeep(state);
-//      }
-//      break;`}
+//      case 'ABOUT_SET_CURRENT':
+//        state = cloneDeep(state);
+//        state.currentItem = action.payload;
+//        break;
+//      case 'APOLLO_QUERY_RESULT':
+//        if (apolloOperationName(action) === 'modifyItem') {
+//          let updatedItem = action.result.data.addItem;
+//          Object.assign(cloneDeep(state.items).find((n) => n.id === updatedItem.id) || {}, updatedItem);
+//        }
+//        break;`}
       default:
         break;
   }

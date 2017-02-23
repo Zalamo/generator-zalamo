@@ -14,7 +14,11 @@ module.exports = class View extends Component {
     this.prompts.push(
       { type: 'confirm', name: 'addRoute', message: 'Add a route for this View?', default: true },
       {
-        type: 'input', name: 'route', message: 'Provide a route path for this view', when: ans => ans.addRoute,
+        type: 'input', name: 'routePath', message: 'Provide a route path for this view', when: ans => ans.addRoute,
+        default: (...args) => `${kebabCase(this.options.Module)}/${kebabCase(this.options.Name)}`
+      },
+      {
+        type: 'input', name: 'routeName', message: 'Provide a route name for this view', when: ans => ans.addRoute,
         default: (...args) => `${kebabCase(this.options.Module)}/${kebabCase(this.options.Name)}`
       }
     );
@@ -44,8 +48,8 @@ module.exports = class View extends Component {
     src = this._addImport(src, `from './views/`, `import { ${ItemName} } from '${ItemPath}';`, `/* Views */`);
     src = this._addToMethodParams(
       src,
-      'const routes: Routes = ',
-      `{ path: '${this.props.route}', component: ${ItemName}, children: [] }`
+      'const routes = NamedRoutes.provideRoutes(',
+      `['${this.props.routeName}', { path: '${this.props.routePath}', component: ${ItemName}, children: [] }]`
     );
 
     this.fs.write(routerPath, src);

@@ -42,28 +42,29 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
 
     assert.fileContent(actions, rex`import { Injectable } from '@angular/core';`);
     assert.fileContent(actions, rex`import { Apollo } from 'apollo-angular';`);
+    assert.fileContent(actions, rex`import { NgRedux } from '@angular-redux/store';`);
+    assert.fileContent(actions, rex`import { AppState${If(samples)`, ApolloQuery, Cast, /*__QUERY_TYPE__*/`} } from '../../types';`);
 
     assert.fileContent(reducer, rex`import { ApolloAction } from 'apollo-client/actions';`);
     assert.fileContent(reducer, rex`import { apolloOperationName } from '../common';`);
 
     assert.fileContent(router, rex`import { NgModule } from '@angular/core';`);
-    assert.fileContent(router, rex`import { RouterModule, Routes } from '@angular/router';`);
+    assert.fileContent(router, rex`import { RouterModule } from '@angular/router';`);
+    assert.fileContent(router, rex`import { NamedRoutes } from '../common/named-router';`);
 
     assert.fileContent(spec, rex`import { Subject } from 'rxjs';`);
-    assert.fileContent(spec, rex`import { mockApollo } from '../common/mocks';`);
+    assert.fileContent(spec, rex`import { mockApollo, mockNgRedux } from '../common/mocks';`);
     assert.fileContent(spec, rex`import { TestActions } from './test.actions';`);
     assert.fileContent(spec, rex`import { testReducer } from './test.reducer';`);
+    assert.fileContent(spec, rex`import { AppState } from '../../types';`);
 
     assert.fileContent(index, rex`import { TestActions } from './test.actions';`);
 
-    assert[ contentIf(samples) ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
-    assert[ contentIf(samples) ](actions, rex`import { NgRedux } from '@angular-redux/store';`);
-    assert[ contentIf(samples) ](actions, rex`import { Observable } from 'rxjs';`);
+    assert[ contentIf(samples) ](actions, rex`import { INITIAL_STATE } from './about.reducer';`);
+//    assert[ contentIf(samples) ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
+//    assert[ contentIf(samples) ](actions, rex`import { Observable } from 'rxjs';`);
     assert[ contentIf(samples) ](actions, rex`import gql from 'graphql-tag';`);
-    assert[ contentIf(samples) ](actions, rex`
-      /* Types */
-      // import { AppState, ApolloQuery, Cast, /*__QUERY_TYPE__*/ } from '../../../types';
-    `);
+
     assert[ contentIf(samples) ](reducer, rex`
       /* Types */
       // import {  } from '../../../types';
@@ -154,48 +155,47 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`
       @Injectable()
       export class TestActions {
-        constructor(private apollo: Apollo${If(samples)`,
-                    private store: NgRedux${type('AppState')}`}) {}
-        ${If(samples)`
-        // public fetchTest(): ApolloQuery<__QUERY_TYPE__.Result> {
-        //   return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
-        //     .watchQuery({ query: __FETCH_QUERY__ });
-        // }
-        
-        // public fixParams(route: ActivatedRoute): Observable${type('Params')} {
-        //   return route.params.scan((fixed: Params, params: Params) => Object.assign(fixed, params), {});
-        // }
-        `}
+        constructor(private apollo: Apollo,
+                    private store: NgRedux${type('AppState')}) {}${If(samples)`
+
+      //  public fetchItems(): ApolloQuery<__QUERY_TYPE__.Result> {
+      //    return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
+      //    .watchQuery({ query: __FETCH_QUERY__ });
+      //  }
+
+      //  public setCurrentItem(id: number) {
+      //    if (!Number.isInteger(id)) {
+      //      id = INITIAL_STATE.currentItemId;
+      //    }
+      //    this.store.dispatch({ type: 'ABOUT_SET_CURRENT', payload: id });
+      //  }`}
       }
+    `);
+  });
+  it('should create an empty Enum for action types', () => {
+    assert.fileContent(reducer, rex`
+      /**
+       * Reducer actions enum (for Intellij IDEs hinting)
+       */
+      declare enum TestReducerActions {${If(samples)`
+        ABOUT_SET_CURRENT
+      `}}
     `);
   });
   it('should create a reducer (empty or with sample code, depending on `samples` flag)', () => {
     assert.fileContent(reducer, rex`
       export function testReducer(state = INITIAL_STATE, action: ApolloAction) {
-        switch (action.type) {
-        ${If(samples)`
-        //    case 'APOLLO_QUERY_INIT':
-        //      break;
-        //    case 'APOLLO_QUERY_RESULT':
-        //      if (apolloOperationName(action) === 'actionName') {
-        //        return action.result.data;
-        //      }
-        //      break;
-        //    case 'APOLLO_QUERY_RESULT_CLIENT':
-        //      if (apolloOperationName(action) === 'actionName') {
-        //        return action.result.data;
-        //      }
-        //      break;
-        //    case 'APOLLO_MUTATION_INIT':
-        //      if (apolloOperationName(action) === 'actionName') {
-        //        state = _.cloneDeep(state);
-        //      }
-        //      break;
-        //    case 'APOLLO_MUTATION_RESULT':
-        //      if (apolloOperationName(action) === 'actionName') {
-        //        state = _.cloneDeep(state);
-        //      }
-        //      break;
+        switch (action.type) {${If(samples)`
+      //      case 'ABOUT_SET_CURRENT':
+      //        state = cloneDeep(state);
+      //        state.currentItem = action.payload;
+      //        break;
+      //      case 'APOLLO_QUERY_RESULT':
+      //        if (apolloOperationName(action) === 'modifyItem') {
+      //          let updatedItem = action.result.data.addItem;
+      //          Object.assign(cloneDeep(state.items).find((n) => n.id === updatedItem.id) || {}, updatedItem);
+      //        }
+      //        break;
         `}
             default:
               break;
@@ -206,9 +206,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   });
   it('should have an empty routes definition', () => {
     assert.fileContent(router, rex`
-      const routes: Routes = [
+      const routes = NamedRoutes.provideRoutes([
         // Define routes here
-      ];
+      ]);
     `);
   });
   it('should have a router module importing router for child and exporting router', () => {
@@ -220,7 +220,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       export class TestRoutingModule {}
     `);
   });
-  it('should have an empty mock for actions', () => {
+  it('should have an empty mock for actions and generated redux mock', () => {
     assert.fileContent(spec, rex`
         export const mockTestActions = () => {
           const s = new Subject();
@@ -228,6 +228,8 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
             // fetchTest: () => s,
           };
         };
+
+        const { ngRedux, mediator } = mockNgRedux${type('AppState')}({ test: [] });
       `)
   });
   it('should have a general suite for the module', () => {
@@ -240,7 +242,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
         let actions: TestActions;
 
         beforeEach(() => {
-          actions = new TestActions(apollo);
+          actions = new TestActions(apollo, ngRedux);
         });
 
         // TODO
@@ -258,7 +260,6 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert[ contentIf(samples) ](actions, rex`
       // const __FETCH_QUERY__ = gql\`
       //   query __FETCH_QUERY__ {
-      //
       //   }\`;
     `);
   });

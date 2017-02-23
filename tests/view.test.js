@@ -4,7 +4,7 @@ const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { rex, rexAny, contentIf, If, generateConfigPermutation, config2services } = require('./../generators/helpers');
+const { rex, rexAny, contentIf, If, generateConfigPermutation, config2services, type } = require('./../generators/helpers');
 
 const generatorModulePath = join(__dirname, '../generators/view');
 const modulePath = 'src/app/+test';
@@ -12,7 +12,7 @@ const view = `${modulePath}/views/item.view.ts`;
 const spec = `${modulePath}/views/item.view.spec.ts`;
 
 const describeSuite = (title, config) => describe(title, () => {
-  const { samples, useActions, useRouter, useRedux, addRoute, route = 'test/me' } = config;
+  const { samples, useActions, useRouter, useRedux, addRoute, routePath = 'test/me', routeName = 'Test' } = config;
   before(() => helpers
     .run(generatorModulePath)
     .inTmpDir(dir => {
@@ -21,7 +21,7 @@ const describeSuite = (title, config) => describe(title, () => {
     })
     .withArguments([ 'Test', 'Item' ])
     .withPrompts({
-      description: 'This is the test doc', samples, addRoute, route, services: config2services(config)
+      description: 'This is the test doc', samples, addRoute, routePath, routeName, services: config2services(config)
     }));
 
   const ifSamples = If(samples);
@@ -32,6 +32,8 @@ const describeSuite = (title, config) => describe(title, () => {
   });
   it('should add required imports', () => {
     assert.fileContent(view, rex`import { Component${ifSamples`, OnInit, OnDestroy`} } from '@angular/core';`);
+    assert[ contentIf(samples) ](view, rex`import { Observable } from 'rxjs';`);
+    assert[ contentIf(samples) ](view, rex`import 'rxjs/operator/takeWhile';`);
     assert[ contentIf(useActions) ](view, rex`import { TestActions } from '../test.actions';`);
     assert[ contentIf(useActions) ](spec, rex`import { mockTestActions } from '../test.spec';`);
     assert[ contentIf(useActions) ](spec, rex`import { TestActions } from '../test.actions';`);
@@ -80,20 +82,20 @@ const describeSuite = (title, config) => describe(title, () => {
   });
   it('should only import view in router if `addRoute` is true', () => {
     assert.fileContent(`${modulePath}/test.router.ts`, rex`
-      import { RouterModule, Routes } from '@angular/router';${If(addRoute)`
+      import { RouterModule } from '@angular/router';${If(addRoute)`
       
       /* Views */
       import { TestItemView } from './views/item.view';`}
 
-      const routes: Routes = [
+      const routes
     `);
   });
   it('should only add desired route to router if `addRoute` is true', () => {
     assert.fileContent(`${modulePath}/test.router.ts`, rex`
-      const routes: Routes = [
+      const routes = NamedRoutes.provideRoutes([
         // Define routes here${If(addRoute)`,
-        { path: '${route}', component: TestItemView, children: [] }`}
-      ];
+        ['${routeName}', { path: '${routePath}', component: TestItemView, children: [] }]`}
+      ]);
     `);
   });
 
@@ -106,19 +108,32 @@ const describeSuite = (title, config) => describe(title, () => {
           ${If(samples)`<h1>Hello {{test$ | async}}</h1>`}
         \`
       })
-      export class TestItemView ${If(samples)`implements OnInit, OnDestroy `}{
+      export class TestItemView ${If(samples)`implements OnInit, OnDestroy `}{${If(samples)`
+        ${If(useRedux)`@select(['test', 'itemsList']) `}public items$: Observable${type('Array<___>')};
+        ${If(useRedux)`@select(['test', 'currentItemId']) `}public currentItem$: Observable${type('number')};
+        
+        private _alive = true;
+        `}${If(useActions && !useRouter)`
+        constructor(public actions: TestActions) {}`}${If(!useActions && useRouter)`
+        constructor(private route: ActivatedRoute) {}`}${If(useActions && useRouter)`
+        constructor(private route: ActivatedRoute,
+                    public actions: TestActions) {}`}
         ${If(samples)`
-          ${If(useRedux)`@select() `}public test$: Observable<___>;
-          private _sub: Subscription;
-        `}
-        ${If(useActions && !useRouter)`constructor(public actions: TestActions) {}` }
-        ${If(!useActions && useRouter)`constructor(private route: ActivatedRoute) {}` }
-        ${If(useActions && useRouter)`constructor(private route: ActivatedRoute,
-                                                  public actions: TestActions) {}` }
-        ${If(samples)`
-          public ngOnInit(): void {/* */}
-          public ngOnDestroy(): void {/* */}
-        `}
+        public ngOnInit(): void {
+          this.route.params
+            .takeWhile(() => this._alive)
+            .subscribe((params: Params) => {${If(useActions)`/* this.actions.SOME_ACTION(+params[ 'id' ]); */`}});
+        }
+
+        public ngOnDestroy(): void {
+          this._alive = false;
+        }
+
+        public getCurrentItem(): Observable${type('AboutStateItem')} {
+          return Observable
+            .combineLatest(this.items$, this.currentItem$)
+            .map(([ list, current ]) => list.find((item) => item.id === current));
+        }`}
       }
     `);
   });
@@ -152,8 +167,8 @@ describe('zalamo:view', () => {
     .map(config => ({
       config,
       title: `samples: ${config.samples}, addRoute: ${config.addRoute}, services: ${
-        config2services(config).join(', ') || 'none'
-      }`
+      config2services(config).join(', ') || 'none'
+        }`
     }))
     .forEach(({ title, config }) => describeSuite(title, config));
 });

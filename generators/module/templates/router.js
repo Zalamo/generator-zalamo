@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 /* C&C */
-import { NamedRoutes } from '../common/named-router';
+import { NamedRoutes } from '../common';
 
 const routes = NamedRoutes.provideRoutes([
   // Define routes here

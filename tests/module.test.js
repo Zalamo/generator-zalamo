@@ -50,7 +50,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
 
     assert.fileContent(router, rex`import { NgModule } from '@angular/core';`);
     assert.fileContent(router, rex`import { RouterModule } from '@angular/router';`);
-    assert.fileContent(router, rex`import { NamedRoutes } from '../common/named-router';`);
+    assert.fileContent(router, rex`import { NamedRoutes } from '../common';`);
 
     assert.fileContent(spec, rex`import { Subject } from 'rxjs';`);
     assert.fileContent(spec, rex`import { mockApollo, mockNgRedux } from '../common/mocks';`);

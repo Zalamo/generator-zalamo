@@ -5,15 +5,15 @@ module.exports = ({ samples, useActions, useRouter, Module, Name, module, name }
 /* 3rd party modules */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-${If(useRouter)`
+import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';${If(useRouter)`
+
 /* C&C */
-import { RouterLinkStubDirective } from '../../common/mocks';
-`}${If(useActions)`
+import { RouterLinkStubDirective } from '../../common/mocks';`}${If(useActions)`
+
 /* ${Module} module pieces */
 import { mock${Module}Actions } from '../${module}.spec';
-import { ${Module}Actions } from '../${module}.actions';
-`}
+import { ${Module}Actions } from '../${module}.actions';`}
+
 /* ${Name} component */
 import { ${Module}${Name}Component } from './${name}.component';
 

@@ -1,11 +1,13 @@
 const { If, type } = require('../../helpers');
 module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) =>
-  `import { Component${If(samples)`, OnInit, OnDestroy`} } from '@angular/core';${If(useRouter)`
+  `/* 3rd party modules */
+import { Component${If(samples)`, OnInit, OnDestroy`} } from '@angular/core';${If(useRouter)`
 import { ActivatedRoute } from '@angular/router';`}${If(samples)`${If(useRedux)`
 import { select } from '@angular-redux/store';`}
 import { Observable } from 'rxjs';
 import 'rxjs/operator/takeWhile';`}${If(useActions)`
 
+/* ${Module} module pieces */
 import { ${Module}Actions } from '../${module}.actions';`}
 
 @Component({

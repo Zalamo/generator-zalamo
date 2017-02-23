@@ -14,7 +14,7 @@ import { RouterLinkStubDirective, mockActivatedRoute } from '../../common/mocks'
 import { mock${Module}Actions } from '../${module}.spec';
 import { ${Module}Actions } from '../${module}.actions';`}
 
-/* ${Name} component */
+/* ${Name} view */
 import { ${Module}${Name}View } from './${name}.view';${If(useRouter)`
 
 const activatedRoute = mockActivatedRoute();`}

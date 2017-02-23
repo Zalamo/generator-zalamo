@@ -1,0 +1,26 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { CounterModule } from './counter';
+import { PostsModule } from './posts';
+import { AppComponent } from './app.component';
+import { BaseRoutesModule } from './core/router';
+import { StoreModule } from './core/store';
+
+/* Feature Modules */
+import { SomeModule } from './+some';
+
+@NgModule({
+  imports: [
+    // import Angular’s modules
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    StoreModule,
+    BaseRoutesModule
+  ],
+  declarations: [ AppComponent ],
+  bootstrap: [ AppComponent ]
+})
+export class AppModule {}

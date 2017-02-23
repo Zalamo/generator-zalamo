@@ -4,7 +4,7 @@ const helpers = require('yeoman-test');
 const assert = require('yeoman-assert');
 const { join } = require('path');
 const { copySync } = require('fs-extra');
-const { docRegExp, rex, contentIf, If, type, generateConfigPermutation } = require('./../generators/helpers');
+const { docRegExp, rexAny, rex, contentIf, If, type, generateConfigPermutation } = require('./../generators/helpers');
 
 const generatorModulePath = join(__dirname, '../generators/module');
 const appModulePath = 'src/app/index.ts';
@@ -71,9 +71,17 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     `);
   });
   it('should import new module in index', () => {
-    assert.fileContent(appModulePath, rex`
-      import { TestModule } from './+test';
-    `);
+    assert.fileContent(appModulePath, rexAny([
+      rex`
+        /* Feature Modules */
+        import { TestModule } from './+test';
+      `,
+      rex`
+        /* Feature Modules */
+        import { SomeModule } from './+some';
+        import { TestModule } from './+test';
+      `
+    ]));
   });
   it('should add new module to imports section in index BEFORE last router', () => {
     assert.fileContent(appModulePath, rex`

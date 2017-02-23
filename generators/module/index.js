@@ -68,7 +68,7 @@ module.exports = class extends ModuleUpdater {
     let src = this.fs.read(modulePath);
 
     src = this._addToNgModule(src, 'imports', ItemName, { before: /BaseRoutesModule/ });
-    src = this._addImport(src, null, `import { ${ItemName} } from '${ItemPath}';`, null);
+    src = this._addImport(src, `from './+`, `import { ${ItemName} } from '${ItemPath}';`, '/* Feature Modules */');
 
     this.fs.write(modulePath, src);
   }

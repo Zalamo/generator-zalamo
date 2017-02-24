@@ -12,7 +12,7 @@ const view = `${modulePath}/views/item.view.ts`;
 const spec = `${modulePath}/views/item.view.spec.ts`;
 
 const describeSuite = (title, config) => describe(title, () => {
-  const { samples, useActions, useRouter, useRedux, addRoute, routePath = 'test/me', routeName = 'Test' } = config;
+  const { samples, useActions, useRouter, useRedux, addRoute, routePath = 'test/me' } = config;
   before(() => helpers
     .run(generatorModulePath)
     .inTmpDir(dir => {
@@ -21,7 +21,7 @@ const describeSuite = (title, config) => describe(title, () => {
     })
     .withArguments([ 'Test', 'Item' ])
     .withPrompts({
-      description: 'This is the test doc', samples, addRoute, routePath, routeName, services: config2services(config)
+      description: 'This is the test doc', samples, addRoute, routePath, services: config2services(config)
     }));
 
   const ifSamples = If(samples);
@@ -82,20 +82,20 @@ const describeSuite = (title, config) => describe(title, () => {
   });
   it('should only import view in router if `addRoute` is true', () => {
     assert.fileContent(`${modulePath}/test.router.ts`, rex`
-      import { RouterModule } from '@angular/router';${If(addRoute)`
+      import { RouterModule, Routes } from '@angular/router';${If(addRoute)`
       
       /* Views */
       import { TestItemView } from './views/item.view';`}
 
-      const routes
+      const routes: Routes = [
     `);
   });
   it('should only add desired route to router if `addRoute` is true', () => {
     assert.fileContent(`${modulePath}/test.router.ts`, rex`
-      const routes = NamedRoutes.provideRoutes([
+      const routes: Routes = [
         // Define routes here${If(addRoute)`,
-        ['${routeName}', { path: '${routePath}', component: TestItemView, children: [] }]`}
-      ]);
+        { path: '${routePath}', component: TestItemView, children: [] }`}
+      ];
     `);
   });
 

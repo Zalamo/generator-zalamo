@@ -7,7 +7,7 @@ const { copySync } = require('fs-extra');
 const { docRegExp, rexAny, rex, contentIf, If, type, generateConfigPermutation } = require('./../generators/helpers');
 
 const generatorModulePath = join(__dirname, '../generators/module');
-const appModulePath = 'src/app/index.ts';
+const appModulePath = 'src/app/app.module.ts';
 const storePath = 'src/app/core/store.ts';
 const index = 'src/app/+test/index.ts';
 const actions = 'src/app/+test/test.actions.ts';
@@ -19,7 +19,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   before(() => helpers
     .run(generatorModulePath)
     .inTmpDir(dir => {
-      copySync(join(__dirname, 'assets', 'app.module.ts.sample'), join(dir, 'src/app', 'index.ts'));
+      copySync(join(__dirname, 'assets', 'app.module.ts.sample'), join(dir, appModulePath));
       copySync(join(__dirname, 'assets', 'store.ts.sample'), join(dir, 'src/app/core', 'store.ts'));
     })
     .withArguments([ 'Test' ])
@@ -49,8 +49,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(reducer, rex`import { apolloOperationName } from '../common';`);
 
     assert.fileContent(router, rex`import { NgModule } from '@angular/core';`);
-    assert.fileContent(router, rex`import { RouterModule } from '@angular/router';`);
-    assert.fileContent(router, rex`import { NamedRoutes } from '../common';`);
+    assert.fileContent(router, rex`import { RouterModule, Routes } from '@angular/router';`);
 
     assert.fileContent(spec, rex`import { Subject } from 'rxjs';`);
     assert.fileContent(spec, rex`import { mockApollo, mockNgRedux } from '../common/mocks';`);
@@ -214,9 +213,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   });
   it('should have an empty routes definition', () => {
     assert.fileContent(router, rex`
-      const routes = NamedRoutes.provideRoutes([
+      const routes: Routes = [
         // Define routes here
-      ]);
+      ];
     `);
   });
   it('should have a router module importing router for child and exporting router', () => {

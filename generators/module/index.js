@@ -64,7 +64,7 @@ module.exports = class extends ModuleUpdater {
     const ItemName = `${Name}Module`;
     const ItemPath = `./+${_.kebabCase(Name)}`;
 
-    let modulePath = this.destinationPath(`src/app/index.ts`);
+    let modulePath = this.destinationPath(`src/app/app.module.ts`);
     let src = this.fs.read(modulePath);
 
     src = this._addToNgModule(src, 'imports', ItemName, { before: /BaseRoutesModule/ });

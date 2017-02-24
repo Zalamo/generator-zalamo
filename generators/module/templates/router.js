@@ -1,14 +1,11 @@
 module.exports = ({ samples, description, name, Name }) =>
   `/* 3rd party modules */
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
-/* C&C */
-import { NamedRoutes } from '../common';
-
-const routes = NamedRoutes.provideRoutes([
+const routes: Routes = [
   // Define routes here
-]);
+];
 
 /**
  * Routes for ${Name} module

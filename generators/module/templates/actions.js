@@ -10,11 +10,11 @@ import gql from 'graphql-tag';
 import { INITIAL_STATE } from './about.reducer';`}
 
 /* Types */
-import { AppState${If(samples)`, ApolloQuery, Cast, /*__QUERY_TYPE__*/`} } from '../../types';${If(samples)`
+import { AppState${If(samples)`, ApolloQuery, Cast, /*__QUERY_TYPE__*/`} } from '../../types';${If(samples)`/*
 
-// const __FETCH_QUERY__ = gql\`
-//   query __FETCH_QUERY__ {
-//   }\`;`}
+const __FETCH_QUERY__ = gql\`
+  query __FETCH_QUERY__ {
+}\`;*/`}
 
 /**
  * Redux Actions for ${Name} module
@@ -22,18 +22,18 @@ import { AppState${If(samples)`, ApolloQuery, Cast, /*__QUERY_TYPE__*/`} } from 
 @Injectable()
 export class ${Name}Actions {
   constructor(private apollo: Apollo,
-              private store: NgRedux${type('AppState')}) {}${If(samples)`
+              private store: NgRedux${type('AppState')}) {}${If(samples)`/*
 
-//  public fetchItems(): ApolloQuery<__QUERY_TYPE__.Result> {
-//    return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
-//      .watchQuery({ query: __FETCH_QUERY__ });
-//  }
+  public fetchItems(): ApolloQuery<__QUERY_TYPE__.Result> {
+    return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
+      .watchQuery({ query: __FETCH_QUERY__ });
+  }
 
-//  public setCurrentItem(id: number) {
-//    if (!Number.isInteger(id)) {
-//      id = INITIAL_STATE.currentItemId;
-//    }
-//    this.store.dispatch({ type: 'ABOUT_SET_CURRENT', payload: id });
-//  }`}
+  public setCurrentItem(id: number) {
+    if (!Number.isInteger(id)) {
+      id = INITIAL_STATE.currentItemId;
+    }
+    this.store.dispatch({ type: 'ABOUT_SET_CURRENT', payload: id });
+  }*/`}
 }
 `;

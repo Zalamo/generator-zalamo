@@ -163,19 +163,19 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       @Injectable()
       export class TestActions {
         constructor(private apollo: Apollo,
-                    private store: NgRedux${type('AppState')}) {}${If(samples)`
+                    private store: NgRedux${type('AppState')}) {}${If(samples)`/*
 
-      //  public fetchItems(): ApolloQuery<__QUERY_TYPE__.Result> {
-      //    return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
-      //    .watchQuery({ query: __FETCH_QUERY__ });
-      //  }
+        public fetchItems(): ApolloQuery<__QUERY_TYPE__.Result> {
+          return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
+          .watchQuery({ query: __FETCH_QUERY__ });
+        }
 
-      //  public setCurrentItem(id: number) {
-      //    if (!Number.isInteger(id)) {
-      //      id = INITIAL_STATE.currentItemId;
-      //    }
-      //    this.store.dispatch({ type: 'ABOUT_SET_CURRENT', payload: id });
-      //  }`}
+        public setCurrentItem(id: number) {
+          if (!Number.isInteger(id)) {
+            id = INITIAL_STATE.currentItemId;
+          }
+          this.store.dispatch({ type: 'ABOUT_SET_CURRENT', payload: id });
+        }*/`}
       }
     `);
   });
@@ -192,20 +192,20 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   it('should create a reducer (empty or with sample code, depending on `samples` flag)', () => {
     assert.fileContent(reducer, rex`
       export function testReducer(state = INITIAL_STATE, action: ApolloAction) {
-        switch (action.type) {${If(samples)`
-      //      case 'ABOUT_SET_CURRENT':
-      //        state = cloneDeep(state);
-      //        state.currentItem = action.payload;
-      //        break;
-      //      case 'APOLLO_QUERY_RESULT':
-      //        if (apolloOperationName(action) === 'modifyItem') {
-      //          let updatedItem = action.result.data.addItem;
-      //          Object.assign(cloneDeep(state.items).find((n) => n.id === updatedItem.id) || {}, updatedItem);
-      //        }
-      //        break;
-        `}
-            default:
-              break;
+        switch (action.type) {${If(samples)`/*
+          case 'ABOUT_SET_CURRENT':
+            state = cloneDeep(state);
+            state.currentItem = action.payload;
+            break;
+          case 'APOLLO_QUERY_RESULT':
+            if (apolloOperationName(action) === 'modifyItem') {
+              let updatedItem = action.result.data.addItem;
+              Object.assign(cloneDeep(state.items).find((n) => n.id === updatedItem.id) || {}, updatedItem);
+            }
+            break;
+        */`}
+          default:
+            break;
         }
         return state;
       }
@@ -264,11 +264,11 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     `);
   });
   it('should only add code samples to actions if `samples` are true', () => {
-    assert[ contentIf(samples) ](actions, rex`
-      // const __FETCH_QUERY__ = gql\`
-      //   query __FETCH_QUERY__ {
-      //   }\`;
-    `);
+    assert[ contentIf(samples) ](actions, rex`/*
+      const __FETCH_QUERY__ = gql\`
+        query __FETCH_QUERY__ {
+      }\`;
+    */`);
   });
 });
 

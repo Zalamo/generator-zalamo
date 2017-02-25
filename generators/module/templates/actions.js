@@ -4,17 +4,22 @@ module.exports = ({ samples, name, Name }) =>
 import { Injectable } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
 import { Apollo } from 'apollo-angular';${If(samples)`
-import gql from 'graphql-tag';
 
 /* ${Name} module pieces */
 import { INITIAL_STATE } from './about.reducer';`}
 
 /* Types */
-import { AppState${If(samples)`, ApolloQuery, Cast, /*__QUERY_TYPE__*/`} } from '../../types';${If(samples)`/*
+import { 
+  AppState, Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
+  GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`}
+} from '../../types';${If(samples)`
 
-const __FETCH_QUERY__ = gql\`
-  query __FETCH_QUERY__ {
-}\`;*/`}
+/* Queries */
+/*
+import getAll${Name}s from './queries/getAll${Name}s.graphql';
+import get${Name} from './queries/get${Name}.graphql';
+import modify${Name}} from './queries/modify${Name}.graphql';
+*/`}
 
 /**
  * Redux Actions for ${Name} module
@@ -22,18 +27,52 @@ const __FETCH_QUERY__ = gql\`
 @Injectable()
 export class ${Name}Actions {
   constructor(private apollo: Apollo,
-              private store: NgRedux${type('AppState')}) {}${If(samples)`/*
+              private store: NgRedux${type('AppState')}) {/* */}${If(samples)`
 
-  public fetchItems(): ApolloQuery<__QUERY_TYPE__.Result> {
-    return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
-      .watchQuery({ query: __FETCH_QUERY__ });
+  /**
+   * Get all ${name}s
+   * @returns Query result Observable
+   */
+  /*
+  public getAll${Name}s(): ApolloQuery${type(`GetAll${Name}sQuery.Result`)} {
+    return (this.apollo as Cast${type(`GetAll${Name}sQuery.Variables`)})
+      .watchQuery({ query: getAll${Name}s });
   }
+  */
 
-  public setCurrentItem(id: number) {
+  /**
+   * Get single ${name}
+   * @returns Query result Observable
+   */
+  /*
+  public get${Name}(id: number): ApolloQuery${type(`Get${Name}Query.Result`)} {
+    return (this.apollo as Cast${`Get${Name}Query.Variables`})
+      .watchQuery({ query: get${Name}, variables: { id } });
+  }
+  */
+
+  /**
+   * Modify ${name}
+   * @returns Query result Observable
+   */
+  /*
+  public modify${Name}(id: number): ApolloQuery${type(`Modify${Name}Query.Result`)} {
+    return (this.apollo as Cast${`Modify${Name}Query.Variables`})
+      .watchQuery({ query: modify${Name}, variables: { id } });
+  }
+  */
+
+  /**
+   * Set the current ${name} ID
+   * @param id Identifier
+   */
+  /*
+  public setCurrent${Name}(id: number): void {
     if (!Number.isInteger(id)) {
-      id = INITIAL_STATE.currentItemId;
+      id = INITIAL_STATE.current${Name}Id;
     }
-    this.store.dispatch({ type: 'ABOUT_SET_CURRENT', payload: id });
-  }*/`}
+    this.store.dispatch({ type: '${Name}_SET_CURRENT', payload: id });
+  }
+  */`}
 }
 `;

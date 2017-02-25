@@ -1,18 +1,36 @@
-const { If } = require('../../helpers');
+const { If, type } = require('../../helpers');
+const { snakeCase } = require('lodash');
+
 module.exports = ({ samples, description, name, Name }) =>
   `/* 3rd party modules */
 import { ApolloAction } from 'apollo-client/actions';
+import { cloneDeep } from 'lodash';
 
 /* C&C */
 import { apolloOperationName } from '../common';${If(samples)`
 
 /* Types */
-// import {  } from '../../../types';`}
+import { ${Name}${If(samples)`/*, GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`} } from '../../types';
 
-// TODO: update INITIAL_STATE type
+/**
+ * ${Name} state
+ */
+export interface ${Name}State {
+  /**
+   * Available ${name}s
+   */
+  ${name}s: Array${type(Name)};
+
+  /**
+   * Current ${name} ID
+   */
+  current${Name}Id: number;
+}
+`}
+
 export const INITIAL_STATE = {${If(samples)`
-  itemsList: [],
-  currentItemId: 0
+  ${name}List: [],
+  current${Name}Id: 0
 `}};
 
 // Note: Remember to use \`apolloOperationName\` to check the query name
@@ -21,7 +39,7 @@ export const INITIAL_STATE = {${If(samples)`
  * Reducer actions enum (for Intellij IDEs hinting)
  */
 declare enum ${Name}ReducerActions {${If(samples)`
-  ABOUT_SET_CURRENT
+  ${snakeCase(Name).toUpperCase()}_SET_CURRENT
 `}}
 
 /**
@@ -29,14 +47,26 @@ declare enum ${Name}ReducerActions {${If(samples)`
  */
 export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
   switch (action.type) {${If(samples)`/*
-    case 'ABOUT_SET_CURRENT':
+    case '${snakeCase(Name).toUpperCase()}_SET_CURRENT':
       state = cloneDeep(state);
-      state.currentItem = action.payload;
+      state.current${Name}Id = action.payload;
       break;
     case 'APOLLO_QUERY_RESULT':
-      if (apolloOperationName(action) === 'modifyItem') {
-        let updatedItem = action.result.data.addItem;
-        Object.assign(cloneDeep(state.items).find((n) => n.id === updatedItem.id) || {}, updatedItem);
+    case 'APOLLO_QUERY_RESULT_CLIENT':
+      if (apolloOperationName(action) === 'getAll${Name}s') {
+        state = cloneDeep(state);
+        state.${name}s = action.result.data.${name}s;
+      } else if (apolloOperationName(action) === 'get${Name}') {
+        state = cloneDeep(state);
+        let updated${Name} = (${type(`Get${Name}Query.Result`)} action.result.data).get${Name};
+        Object.assign(state.${name}s.find(({id}) => id === updated${Name}.id), updated${Name});
+      }
+      break;
+    case 'APOLLO_MUTATION_RESULT':
+      if (apolloOperationName(action) === 'modify${Name}') {
+        state = cloneDeep(state);
+        let diff = (${type(`Modify${Name}Mutation.Result`)} action.result.data).modify${Name};
+        Object.assign(state.posts.find(({id}) => id === diff.id), diff);
       }
       break;*/`}
     default:

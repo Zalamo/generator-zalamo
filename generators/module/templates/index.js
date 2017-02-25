@@ -34,7 +34,7 @@ import { ${Name}RoutingModule } from './${name}.router';
     ${Name}RoutingModule
   ]
 })
-export class ${Name}Module {}
+export class ${Name}Module {/* */}
 
 export * from './${name}.actions';
 export * from './${name}.reducer';

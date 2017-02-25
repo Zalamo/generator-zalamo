@@ -1,8 +1,6 @@
 const { type } = require('../../helpers');
 module.exports = ({ samples, description, name, Name }) =>
-  `/* 3rd party modules */
-import { Subject } from 'rxjs';
-
+  `/* tslint:disable:no-unused-variable */
 /* C&C */
 import { mockApollo, mockNgRedux } from '../common/mocks';
 

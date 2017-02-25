@@ -43,7 +43,12 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`import { Injectable } from '@angular/core';`);
     assert.fileContent(actions, rex`import { Apollo } from 'apollo-angular';`);
     assert.fileContent(actions, rex`import { NgRedux } from '@angular-redux/store';`);
-    assert.fileContent(actions, rex`import { AppState${If(samples)`, ApolloQuery, Cast, /*__QUERY_TYPE__*/`} } from '../../types';`);
+    assert.fileContent(actions, rex`
+      import { 
+        AppState, Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
+        GetItemsQuery, ModifyItemMutation*/`}
+      } from '../../types';
+    `);
 
     assert.fileContent(reducer, rex`import { ApolloAction } from 'apollo-client/actions';`);
     assert.fileContent(reducer, rex`import { apolloOperationName } from '../common';`);
@@ -60,9 +65,6 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(index, rex`import { TestActions } from './test.actions';`);
 
     assert[ contentIf(samples) ](actions, rex`import { INITIAL_STATE } from './about.reducer';`);
-//    assert[ contentIf(samples) ](actions, rex`import { ActivatedRoute, Params } from '@angular/router';`);
-//    assert[ contentIf(samples) ](actions, rex`import { Observable } from 'rxjs';`);
-    assert[ contentIf(samples) ](actions, rex`import gql from 'graphql-tag';`);
 
     assert[ contentIf(samples) ](reducer, rex`
       /* Types */
@@ -264,11 +266,13 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     `);
   });
   it('should only add code samples to actions if `samples` are true', () => {
-    assert[ contentIf(samples) ](actions, rex`/*
-      const __FETCH_QUERY__ = gql\`
-        query __FETCH_QUERY__ {
-      }\`;
-    */`);
+    assert[ contentIf(samples) ](actions, rex`
+      /* Queries */
+      /*
+      import getItems from './queries/getItems.graphql';
+      import modifyItem from './queries/modifyItem.graphql';
+      */
+    `);
   });
 });
 

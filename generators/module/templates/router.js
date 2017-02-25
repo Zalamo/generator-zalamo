@@ -14,5 +14,5 @@ const routes: Routes = [
   imports: [ RouterModule.forChild(routes) ],
   exports: [ RouterModule ]
 })
-export class ${Name}RoutingModule {}
+export class ${Name}RoutingModule {/* */}
 `;

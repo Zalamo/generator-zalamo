@@ -1,12 +1,15 @@
 const { If } = require('../../helpers');
 
-module.exports = ({ samples, useActions, Module, Name, module, name }) =>
+module.exports = ({ samples, useActions, Module, Name, module, name, description }) =>
   `/* 3rd party modules */
 import { Component${If(samples)`, Input`} } from '@angular/core';${If(useActions)`
 
 /* ${Module} module pieces */
 import { ${Module}Actions } from '../${module}.actions';`}
 
+/**
+ * ${description}
+ */
 @Component({
   selector: '${module}-${name}',
   template: \`

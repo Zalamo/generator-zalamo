@@ -31,9 +31,8 @@ const describeSuite = (title, config) => describe(title, () => {
     assert.file(spec);
   });
   it('should add required imports', () => {
-    assert.fileContent(view, rex`import { Component${ifSamples`, OnInit, OnDestroy`} } from '@angular/core';`);
+    assert.fileContent(view, rex`import { Component${ifSamples`, OnInit`} } from '@angular/core';`);
     assert[ contentIf(samples) ](view, rex`import { Observable } from 'rxjs';`);
-    assert[ contentIf(samples) ](view, rex`import 'rxjs/operator/takeWhile';`);
     assert[ contentIf(useActions) ](view, rex`import { TestActions } from '../test.actions';`);
     assert[ contentIf(useActions) ](spec, rex`import { mockTestActions } from '../test.spec';`);
     assert[ contentIf(useActions) ](spec, rex`import { TestActions } from '../test.actions';`);
@@ -83,7 +82,7 @@ const describeSuite = (title, config) => describe(title, () => {
   it('should only import view in router if `addRoute` is true', () => {
     assert.fileContent(`${modulePath}/test.router.ts`, rex`
       import { RouterModule, Routes } from '@angular/router';${If(addRoute)`
-      
+
       /* Views */
       import { TestItemView } from './views/item.view';`}
 
@@ -108,33 +107,34 @@ const describeSuite = (title, config) => describe(title, () => {
           ${If(samples)`<h1>Hello {{test$ | async}}</h1>`}
         \`
       })
-      export class TestItemView ${If(samples)`implements OnInit, OnDestroy `}{${If(samples)`
-        ${If(useRedux)`@select(['test', 'itemsList']) `}public items$: Observable${type('Array<___>')};
-        ${If(useRedux)`@select(['test', 'currentItemId']) `}public currentItem$: Observable${type('number')};
-        
-        private _alive = true;
+      export class TestItemView ${If(samples && useActions)`extends AliveState implements OnInit `}{${
+        samples || useActions || useRouter ? `${If(samples)`
+        ${If(useRedux)`@select(['test', 'tests']) `}public tests$: Observable${type('Array<Test>')};
+        ${If(useRedux)`@select(['test', 'currentTestId']) `}public currentTest$: Observable${type('number')};
         `}${If(useActions && !useRouter)`
-        constructor(public actions: TestActions) {}`}${If(!useActions && useRouter)`
-        constructor(private route: ActivatedRoute) {}`}${If(useActions && useRouter)`
+        constructor(public actions: TestActions) {${samples ? `\nsuper();\n` : '/* */'}}`}${If(!useActions && useRouter)`
+        constructor(private route: ActivatedRoute) {/* */}`}${If(useActions && useRouter)`
         constructor(private route: ActivatedRoute,
-                    public actions: TestActions) {}`}
-        ${If(samples)`
+                    public actions: TestActions) {${samples ? `\nsuper();\n` : '/* */'}}`}${If(samples)`${If(useActions)`
+
+        /**
+         * Initialize the subscription
+         */
         public ngOnInit(): void {
-          this.route.params
-            .takeWhile(() => this._alive)
-            .subscribe((params: Params) => {${If(useActions)`/* this.actions.SOME_ACTION(+params[ 'id' ]); */`}});
-        }
+          this.subscribeWhileAlive(this.actions.getAllTests());
+        }`}${If(useRouter)`
 
-        public ngOnDestroy(): void {
-          this._alive = false;
-        }
-
-        public getCurrentItem(): Observable${type('AboutStateItem')} {
+        /**
+         * Get current test based on tests$ and router params
+         * @returns Test item Observable
+         */
+        public getCurrentTest(): Observable${type('Test')} {
           return Observable
-            .combineLatest(this.items$, this.currentItem$)
-            .map(([ list, current ]) => list.find((item) => item.id === current));
+            .combineLatest(this.tests$, this.route.params)
+            .map(([ tests, params ]) => tests.find(({id}) => id === Number(params['id'])));
         }`}
-      }
+      `}
+` : `/* */`}}
     `);
   });
 

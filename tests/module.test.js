@@ -46,17 +46,17 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`
       import { 
         AppState, Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
-        GetItemsQuery, ModifyItemMutation*/`}
+        GetAllTestsQuery, GetTestQuery, ModifyTestMutation*/`}
       } from '../../types';
     `);
 
     assert.fileContent(reducer, rex`import { ApolloAction } from 'apollo-client/actions';`);
+    assert.fileContent(reducer, rex`import { cloneDeep } from 'lodash';`);
     assert.fileContent(reducer, rex`import { apolloOperationName } from '../common';`);
 
     assert.fileContent(router, rex`import { NgModule } from '@angular/core';`);
     assert.fileContent(router, rex`import { RouterModule, Routes } from '@angular/router';`);
 
-    assert.fileContent(spec, rex`import { Subject } from 'rxjs';`);
     assert.fileContent(spec, rex`import { mockApollo, mockNgRedux } from '../common/mocks';`);
     assert.fileContent(spec, rex`import { TestActions } from './test.actions';`);
     assert.fileContent(spec, rex`import { testReducer } from './test.reducer';`);
@@ -65,11 +65,6 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(index, rex`import { TestActions } from './test.actions';`);
 
     assert[ contentIf(samples) ](actions, rex`import { INITIAL_STATE } from './about.reducer';`);
-
-    assert[ contentIf(samples) ](reducer, rex`
-      /* Types */
-      // import {  } from '../../../types';
-    `);
   });
   it('should import new module in index', () => {
     assert.fileContent(appModulePath, rexAny([
@@ -152,7 +147,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     `);
   });
   it('should have properly named exported module class', () => {
-    assert.fileContent(index, rex`export class TestModule {}`);
+    assert.fileContent(index, rex`export class TestModule {/* */}`);
   });
   it('should export actions, reducer and router', () => {
     assert.fileContent(index, rex`export * from './test.actions';`);
@@ -162,22 +157,59 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
 
   it('should create an empty actions Injectable class with apollo service', () => {
     assert.fileContent(actions, rex`
+      /**
+       * Redux Actions for Test module
+       */
       @Injectable()
       export class TestActions {
         constructor(private apollo: Apollo,
-                    private store: NgRedux${type('AppState')}) {}${If(samples)`/*
+                    private store: NgRedux${type('AppState')}) {/* */}${If(samples)`
 
-        public fetchItems(): ApolloQuery<__QUERY_TYPE__.Result> {
-          return (this.apollo as Cast<__QUERY_TYPE__.Variables>)
-          .watchQuery({ query: __FETCH_QUERY__ });
+      /**
+       * Get all tests
+       * @returns Query result Observable
+       */
+      /*
+      public getAllTests(): ApolloQuery${type(`GetAllTestsQuery.Result`)} {
+        return (this.apollo as Cast${type(`GetAllTestsQuery.Variables`)})
+          .watchQuery({ query: getAllTests });
+      }
+      */
+
+      /**
+       * Get single test
+       * @returns Query result Observable
+       */
+      /*
+      public getTest(id: number): ApolloQuery${type(`GetTestQuery.Result`)} {
+        return (this.apollo as Cast${`GetTestQuery.Variables`})
+          .watchQuery({ query: getTest, variables: { id } });
+      }
+      */
+
+      /**
+       * Modify test
+       * @returns Query result Observable
+       */
+      /*
+      public modifyTest(id: number): ApolloQuery${type(`ModifyTestQuery.Result`)} {
+        return (this.apollo as Cast${`ModifyTestQuery.Variables`})
+          .watchQuery({ query: modifyTest, variables: { id } });
+      }
+      */
+
+      /**
+       * Set the current test ID
+       * @param id Identifier
+       */
+      /*
+      public setCurrentTest(id: number): void {
+        if (!Number.isInteger(id)) {
+          id = INITIAL_STATE.currentTestId;
         }
-
-        public setCurrentItem(id: number) {
-          if (!Number.isInteger(id)) {
-            id = INITIAL_STATE.currentItemId;
-          }
-          this.store.dispatch({ type: 'ABOUT_SET_CURRENT', payload: id });
-        }*/`}
+        this.store.dispatch({ type: 'Test_SET_CURRENT', payload: id });
+      }
+      */`}
       }
     `);
   });
@@ -187,7 +219,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        * Reducer actions enum (for Intellij IDEs hinting)
        */
       declare enum TestReducerActions {${If(samples)`
-        ABOUT_SET_CURRENT
+        TEST_SET_CURRENT
       `}}
     `);
   });
@@ -195,17 +227,28 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(reducer, rex`
       export function testReducer(state = INITIAL_STATE, action: ApolloAction) {
         switch (action.type) {${If(samples)`/*
-          case 'ABOUT_SET_CURRENT':
+          case 'TEST_SET_CURRENT':
             state = cloneDeep(state);
-            state.currentItem = action.payload;
+            state.currentTestId = action.payload;
             break;
           case 'APOLLO_QUERY_RESULT':
-            if (apolloOperationName(action) === 'modifyItem') {
-              let updatedItem = action.result.data.addItem;
-              Object.assign(cloneDeep(state.items).find((n) => n.id === updatedItem.id) || {}, updatedItem);
+          case 'APOLLO_QUERY_RESULT_CLIENT':
+            if (apolloOperationName(action) === 'getAllTests') {
+              state = cloneDeep(state);
+              state.tests = action.result.data.tests;
+            } else if (apolloOperationName(action) === 'getTest') {
+              state = cloneDeep(state);
+              let updatedTest = (${type('GetTestQuery.Result')} action.result.data).getTest;
+              Object.assign(state.tests.find(({id}) => id === updatedTest.id), updatedTest);
             }
             break;
-        */`}
+          case 'APOLLO_MUTATION_RESULT':
+            if (apolloOperationName(action) === 'modifyTest') {
+              state = cloneDeep(state);
+              let diff = (${type('ModifyTestMutation.Result')} action.result.data).modifyTest;
+              Object.assign(state.posts.find(({id}) => id === diff.id), diff);
+            }
+            break;*/`}
           default:
             break;
         }
@@ -226,7 +269,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
         imports: [ RouterModule.forChild(routes) ],
         exports: [ RouterModule ]
       })
-      export class TestRoutingModule {}
+      export class TestRoutingModule {/* */}
     `);
   });
   it('should have an empty mock for actions and generated redux mock', () => {
@@ -269,8 +312,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert[ contentIf(samples) ](actions, rex`
       /* Queries */
       /*
-      import getItems from './queries/getItems.graphql';
-      import modifyItem from './queries/modifyItem.graphql';
+      import getAllTests from './queries/getAllTests.graphql';
+      import getTest from './queries/getTest.graphql';
+      import modifyTest} from './queries/modifyTest.graphql';
       */
     `);
   });

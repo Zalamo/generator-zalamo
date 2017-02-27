@@ -103,12 +103,16 @@ const describeSuite = (title, config) => describe(title, () => {
     assert.fileContent(view, rex`
       @Component({
         selector: 'test-item-view',
-        template: \`
-          ${If(samples)`<h1>Hello {{test$ | async}}</h1>`}
+        template: \`${If(samples)`
+          <h1>Hello TestItemView</h1>
+          <ul *ngFor="let test of tests$ | async">
+            <li>{{test | json}}</li>
+          </ul>
+          <p>{{getCurrentTest() | async | json}}</p>`}
         \`
       })
       export class TestItemView ${If(samples && useActions)`extends AliveState implements OnInit `}{${
-        samples || useActions || useRouter ? `${If(samples)`
+      samples || useActions || useRouter ? `${If(samples)`
         ${If(useRedux)`@select(['test', 'tests']) `}public tests$: Observable${type('Array<Test>')};
         ${If(useRedux)`@select(['test', 'currentTestId']) `}public currentTest$: Observable${type('number')};
         `}${If(useActions && !useRouter)`

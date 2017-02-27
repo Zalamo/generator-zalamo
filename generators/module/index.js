@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const yosay = require('yosay');
 const _ = require('lodash');
 const { ModuleUpdater } = require('../helpers');
+const { join } = require('path');
 
 module.exports = class extends ModuleUpdater {
   constructor(args, opts) {
@@ -18,6 +19,10 @@ module.exports = class extends ModuleUpdater {
       prompts: [
         { type: 'input', name: 'description', message: 'Describe a module', default: 'TODO: Write a documentation' },
         { type: 'confirm', name: 'samples', message: 'Insert sample code?', default: false },
+        {
+          type: 'confirm', name: 'sampleQueries', message: 'Include sample queries?', default: true,
+          when: (ans) => ans.samples
+        },
         { type: 'confirm', name: 'registerReducer', message: 'Register reducer?', default: true }
       ]
     });
@@ -32,6 +37,10 @@ module.exports = class extends ModuleUpdater {
 
   writing() {
     super.writing();
+    this.fs.copy(
+      join(this.templatePath('queries'), '**'),
+      this.destinationPath(`src/app/+${_.kebabCase(this.options.Name)}/queries`)
+    );
     this._updateModule();
     if (this.props.registerReducer) {
       this._updateStore();

@@ -218,7 +218,7 @@ class ModuleUpdater extends Generator {
     if (src.includes(entry)) {
       return src;
     }
-    let importPattern = `import \\{[ \\w_,]+} from '([^']+)';`;
+    let importPattern = `import \\{?[ \\w_,]+}? from '([^']+)';`;
     let imports = src.match(new RegExp(importPattern, 'g'));
 
     let targetImports = target ? imports.filter(item => item.includes(target)) : [];

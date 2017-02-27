@@ -17,18 +17,18 @@ const resolveFunctions = {
     posts() {
       return posts;
     },
-    post(_, args) {
-      return posts.find((post) => post.id === args.postId);
+    post(_, { id }) {
+      return find(posts, { id });
     },
     authors() {
       return authors;
     }
   },
   Mutation: {
-    upvotePost(_, { postId }) {
-      const post = find(posts, { id: postId });
+    upvotePost(_, { id }) {
+      const post = find(posts, { id });
       if (!post) {
-        throw new Error(`Couldn't find post with id ${postId}`);
+        throw new Error(`Couldn't find post with id ${id}`);
       }
       post.votes += 1;
       pubsub.publish('postUpvoted', post);

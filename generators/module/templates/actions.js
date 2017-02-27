@@ -6,10 +6,10 @@ import { NgRedux } from '@angular-redux/store';
 import { Apollo } from 'apollo-angular';${If(samples)`
 
 /* ${Name} module pieces */
-import { INITIAL_STATE } from './about.reducer';`}
+import { INITIAL_STATE } from './${name}.reducer';`}
 
 /* Types */
-import { 
+import {
   AppState, Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
   GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`}
 } from '../../types';${If(samples)`
@@ -18,7 +18,7 @@ import {
 /*
 import getAll${Name}s from './queries/getAll${Name}s.graphql';
 import get${Name} from './queries/get${Name}.graphql';
-import modify${Name}} from './queries/modify${Name}.graphql';
+import modify${Name} from './queries/modify${Name}.graphql';
 */`}
 
 /**
@@ -46,7 +46,7 @@ export class ${Name}Actions {
    */
   /*
   public get${Name}(id: number): ApolloQuery${type(`Get${Name}Query.Result`)} {
-    return (this.apollo as Cast${`Get${Name}Query.Variables`})
+    return (this.apollo as Cast${type(`Get${Name}Query.Variables`)})
       .watchQuery({ query: get${Name}, variables: { id } });
   }
   */
@@ -56,8 +56,8 @@ export class ${Name}Actions {
    * @returns Query result Observable
    */
   /*
-  public modify${Name}(id: number): ApolloQuery${type(`Modify${Name}Query.Result`)} {
-    return (this.apollo as Cast${`Modify${Name}Query.Variables`})
+  public modify${Name}(id: number): ApolloMutation${type(`Modify${Name}Mutation.Result`)} {
+    return (this.apollo as Cast${type(`Modify${Name}Mutation.Variables`)})
       .watchQuery({ query: modify${Name}, variables: { id } });
   }
   */

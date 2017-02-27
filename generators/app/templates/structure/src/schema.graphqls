@@ -15,13 +15,13 @@ type Post {
 # the schema allows the following query:
 type Query {
   posts: [Post]
-  post(postId: Int): Post
+  post(id: Int): Post
   authors: [Author]
 }
 
 # this schema allows the following mutation:
 type Mutation {
-  upvotePost (postId: Int!): Post
+  upvotePost (id: Int!): Post
 }
 
 type Subscription {

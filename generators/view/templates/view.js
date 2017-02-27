@@ -20,8 +20,12 @@ import { ${Module} } from '../../../types';`}
  */
 @Component({
   selector: '${module}-${name}-view',
-  template: \`
-    ${If(samples)`<h1>Hello {{${module}$ | async}}</h1>`}
+  template: \`${If(samples)`
+    <h1>Hello ${Module}${Name}View</h1>
+    <ul *ngFor="let ${module} of ${module}s$ | async">
+      <li>{{${module} | json}}</li>
+    </ul>
+    <p>{{getCurrent${Module}() | async | json}}</p>`}
   \`
 })
 export class ${Module}${Name}View${If(samples && useActions)` extends AliveState implements OnInit`} {${

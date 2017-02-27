@@ -6,6 +6,11 @@ const { join } = require('path');
 const { kebabCase } = require('lodash');
 
 module.exports = class extends Generator {
+  constructor(...args) {
+    super(...args);
+    this.argument('Name', { type: String, required: true });
+  }
+
   prompting() {
     this.log(`Yo! For module, view or component generation use the following:
 * ${chalk.yellow('zalamo')}:${chalk.green('module')} ${chalk.blue('ModuleName')}
@@ -16,7 +21,6 @@ Please note: All names have to be ${chalk.red('UpperCamelCased')}!!
 
     return this
       .prompt([
-        { type: 'input', name: 'appName', message: 'What is the app name?' },
         { type: 'confirm', name: 'addGraphServer', message: 'Would you like to add a sample graphQL server?' }
       ])
       .then(props => this.props = props);
@@ -25,9 +29,10 @@ Please note: All names have to be ${chalk.red('UpperCamelCased')}!!
   writing() {
     this.fs.copy(
       join(this.templatePath('structure'), '**'),
-      this.destinationPath()
+      this.destinationPath(),
+      { globOptions: { dot: true } }
     );
-    const appName = kebabCase(this.props.appName).toLowerCase();
+    const appName = kebabCase(this.options.Name).toLowerCase();
     this.fs.copyTpl(
       this.templatePath('structure/src/app/app.component.ts'),
       this.destinationPath('src/app/app.component.ts'),
@@ -45,7 +50,7 @@ Please note: All names have to be ${chalk.red('UpperCamelCased')}!!
     }
   }
 
-  install() {
-    this.installDependencies({ npm: true, bower: false, yarn: false });
-  }
+//  install() {
+//    this.installDependencies({ npm: true, bower: false, yarn: false });
+//  }
 };

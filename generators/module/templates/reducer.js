@@ -25,11 +25,10 @@ export interface ${Name}State {
    * Current ${name} ID
    */
   current${Name}Id: number;
-}
-`}
+}`}
 
 export const INITIAL_STATE = {${If(samples)`
-  ${name}List: [],
+  ${name}s: [],
   current${Name}Id: 0
 `}};
 
@@ -55,10 +54,10 @@ export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
     case 'APOLLO_QUERY_RESULT_CLIENT':
       if (apolloOperationName(action) === 'getAll${Name}s') {
         state = cloneDeep(state);
-        state.${name}s = action.result.data.${name}s;
+        state.${name}s = (${type(`GetAll${Name}sQuery.Result`)} action.result.data).${name}s;
       } else if (apolloOperationName(action) === 'get${Name}') {
         state = cloneDeep(state);
-        let updated${Name} = (${type(`Get${Name}Query.Result`)} action.result.data).get${Name};
+        let updated${Name} = (${type(`Get${Name}Query.Result`)} action.result.data).${name};
         Object.assign(state.${name}s.find(({id}) => id === updated${Name}.id), updated${Name});
       }
       break;

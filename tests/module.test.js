@@ -57,6 +57,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(router, rex`import { NgModule } from '@angular/core';`);
     assert.fileContent(router, rex`import { RouterModule, Routes } from '@angular/router';`);
 
+    assert.fileContent(spec, rex`import { Subject } from 'rxjs';`);
     assert.fileContent(spec, rex`import { mockApollo, mockNgRedux } from '../common/mocks';`);
     assert.fileContent(spec, rex`import { TestActions } from './test.actions';`);
     assert.fileContent(spec, rex`import { testReducer } from './test.reducer';`);
@@ -64,7 +65,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
 
     assert.fileContent(index, rex`import { TestActions } from './test.actions';`);
 
-    assert[ contentIf(samples) ](actions, rex`import { INITIAL_STATE } from './about.reducer';`);
+    assert[ contentIf(samples) ](actions, rex`import { INITIAL_STATE } from './test.reducer';`);
   });
   it('should import new module in index', () => {
     assert.fileContent(appModulePath, rexAny([
@@ -182,7 +183,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        */
       /*
       public getTest(id: number): ApolloQuery${type(`GetTestQuery.Result`)} {
-        return (this.apollo as Cast${`GetTestQuery.Variables`})
+        return (this.apollo as Cast${type(`GetTestQuery.Variables`)})
           .watchQuery({ query: getTest, variables: { id } });
       }
       */
@@ -192,8 +193,8 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        * @returns Query result Observable
        */
       /*
-      public modifyTest(id: number): ApolloQuery${type(`ModifyTestQuery.Result`)} {
-        return (this.apollo as Cast${`ModifyTestQuery.Variables`})
+      public modifyTest(id: number): ApolloMutation${type(`ModifyTestMutation.Result`)} {
+        return (this.apollo as Cast${type(`ModifyTestMutation.Variables`)})
           .watchQuery({ query: modifyTest, variables: { id } });
       }
       */
@@ -235,10 +236,10 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
           case 'APOLLO_QUERY_RESULT_CLIENT':
             if (apolloOperationName(action) === 'getAllTests') {
               state = cloneDeep(state);
-              state.tests = action.result.data.tests;
+              state.tests = (${type('GetAllTestsQuery.Result')} action.result.data).tests;
             } else if (apolloOperationName(action) === 'getTest') {
               state = cloneDeep(state);
-              let updatedTest = (${type('GetTestQuery.Result')} action.result.data).getTest;
+              let updatedTest = (${type('GetTestQuery.Result')} action.result.data).test;
               Object.assign(state.tests.find(({id}) => id === updatedTest.id), updatedTest);
             }
             break;
@@ -314,7 +315,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       /*
       import getAllTests from './queries/getAllTests.graphql';
       import getTest from './queries/getTest.graphql';
-      import modifyTest} from './queries/modifyTest.graphql';
+      import modifyTest from './queries/modifyTest.graphql';
       */
     `);
   });

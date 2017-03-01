@@ -9,9 +9,7 @@ import { mockApollo, mockNgRedux } from '../common/mocks';
 
 /* ${Name} module pieces */
 import { ${Name}Actions } from './${name}.actions';
-import { ${name}Reducer } from './${name}.reducer';
-
-/* Types */
+import { ${name}Reducer, ${Name}State } from './${name}.reducer';
 
 /**
  * Function to generate ${Name}Actions mocking object

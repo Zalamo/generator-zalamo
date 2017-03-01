@@ -6,13 +6,10 @@ import { NgRedux } from '@angular-redux/store';
 import { Apollo } from 'apollo-angular';
 
 /* ${Name} module pieces */
-import { ${Name}State${If(samples)`, INITIAL_STATE, ${Name}ReducerActions`} } from './${name}.reducer';
+import { ${Name}State${If(samples)`, INITIAL_STATE, ${Name}ReducerActions`} } from './${name}.reducer';${If(samples)`
 
 /* Types */
-import {
-  Vars, ApolloQuery, ApolloMutation${If(samples)`/*,
-  GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`}
-} from '../../types';${If(samples)`
+/* import { Get${Name}Query, Modify${Name}Mutation } from '../../types/graphql'; */
 
 /* Queries */
 /*
@@ -34,9 +31,8 @@ export class ${Name}Actions {
    * @returns Query result Observable
    */
   /*
-  public getAll${Name}s(): ApolloQuery${type(`GetAll${Name}sQuery.Result`)} {
-    return (this.apollo as Vars${type(`GetAll${Name}sQuery.Variables`)})
-      .watchQuery({ query: getAll${Name}s });
+  public getAll${Name}s(): Observable${type('any')} {
+    return this.apollo.watchQuery({ query: getAll${Name}s });
   }
   */
 
@@ -45,9 +41,9 @@ export class ${Name}Actions {
    * @returns Query result Observable
    */
   /*
-  public get${Name}(id: number): ApolloQuery${type(`Get${Name}Query.Result`)} {
-    return (this.apollo as Vars${type(`Get${Name}Query.Variables`)})
-      .watchQuery({ query: get${Name}, variables: { id } });
+  public get${Name}(id: number): Observable${type('any')} {
+    const variables: Get${Name}Query.Variables = { id };
+    return this.apollo.watchQuery({ query: get${Name}, variables });
   }
   */
 
@@ -56,9 +52,9 @@ export class ${Name}Actions {
    * @returns Query result Observable
    */
   /*
-  public modify${Name}(id: number): ApolloMutation${type(`Modify${Name}Mutation.Result`)} {
-    return (this.apollo as Vars${type(`Modify${Name}Mutation.Variables`)})
-      .watchQuery({ query: modify${Name}, variables: { id } });
+  public modify${Name}(id: number): Observable${type('any')} {
+    const variables: Modify${Name}Mutation.Variables = { id };
+    return this.apollo.mutate({ query: modify${Name}, variables });
   }
   */
 

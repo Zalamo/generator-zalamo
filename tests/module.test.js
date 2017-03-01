@@ -43,13 +43,10 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`import { Injectable } from '@angular/core';`);
     assert.fileContent(actions, rex`import { Apollo } from 'apollo-angular';`);
     assert.fileContent(actions, rex`import { NgRedux } from '@angular-redux/store';`);
-    assert.fileContent(actions, rex`import { TestState${If(samples)`, INITIAL_STATE, TestReducerActions`} } from './test.reducer';`);
     assert.fileContent(actions, rex`
-      import { 
-        Vars, ApolloQuery, ApolloMutation${If(samples)`/*,
-        GetAllTestsQuery, GetTestQuery, ModifyTestMutation*/`}
-      } from '../../types';
-    `);
+    import { TestState${If(samples)`, INITIAL_STATE, TestReducerActions`} } from './test.reducer';
+`);
+    assert[ contentIf(samples) ](actions, rex`import { GetTestQuery, ModifyTestMutation } from '../../types/graphql';`);
 
     assert.fileContent(reducer, rex`import { ApolloAction } from 'apollo-client/actions';`);
     assert.fileContent(reducer, rex`import { cloneDeep } from 'lodash';`);
@@ -62,7 +59,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(spec, rex`import { Subject } from 'rxjs';`);
     assert.fileContent(spec, rex`import { mockApollo, mockNgRedux } from '../common/mocks';`);
     assert.fileContent(spec, rex`import { TestActions } from './test.actions';`);
-    assert.fileContent(spec, rex`import { testReducer } from './test.reducer';`);
+    assert.fileContent(spec, rex`import { testReducer, TestState } from './test.reducer';`);
 
     assert.fileContent(index, rex`import { TestActions } from './test.actions';`);
 
@@ -180,9 +177,8 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        * @returns Query result Observable
        */
       /*
-      public getAllTests(): ApolloQuery${type(`GetAllTestsQuery.Result`)} {
-        return (this.apollo as Vars${type(`GetAllTestsQuery.Variables`)})
-          .watchQuery({ query: getAllTests });
+      public getAllTests(): Observable${type('any')} {
+        return this.apollo.watchQuery({ query: getAllTests });
       }
       */
 
@@ -191,9 +187,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        * @returns Query result Observable
        */
       /*
-      public getTest(id: number): ApolloQuery${type(`GetTestQuery.Result`)} {
-        return (this.apollo as Vars${type(`GetTestQuery.Variables`)})
-          .watchQuery({ query: getTest, variables: { id } });
+      public getTest(id: number): Observable${type('any')} {
+        const variables: GetTestQuery.Variables = { id };
+        return this.apollo.watchQuery({ query: getTest, variables });
       }
       */
 
@@ -202,9 +198,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        * @returns Query result Observable
        */
       /*
-      public modifyTest(id: number): ApolloMutation${type(`ModifyTestMutation.Result`)} {
-        return (this.apollo as Vars${type(`ModifyTestMutation.Variables`)})
-          .watchQuery({ query: modifyTest, variables: { id } });
+      public modifyTest(id: number): Observable${type('any')} {
+        const variables: ModifyTestMutation.Variables = { id };
+        return this.apollo.mutate({ query: modifyTest, variables });
       }
       */
 

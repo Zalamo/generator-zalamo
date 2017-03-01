@@ -5,7 +5,7 @@ import { combineReducers, Reducer, Action, applyMiddleware } from 'redux';
 import { ApolloClient, createNetworkInterface } from 'apollo-client';
 import { ApolloModule } from 'apollo-angular';
 
-import { AppState } from '../../../types/index';
+import { AppState } from '../../../types/graphql';
 
 /* Reducers */
 import { counterReducer, CounterState } from '../counter/counter.reducer';

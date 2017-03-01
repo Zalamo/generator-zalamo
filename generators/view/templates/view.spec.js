@@ -18,9 +18,9 @@ import { ${Module}Actions } from '../${module}.actions';`}
 import { ${Module}${Name}View } from './${name}.view';${If(useRedux)`
 
 /* Types */
-import { AppState } from '../../../types';
+import { ${Module}State } from './${module}.reducer';
 
-const { ngRedux, mediator } = mockNgRedux${type('AppState')}({ posts: [] });
+const { ngRedux, mediator } = mockNgRedux${type(`{ ${module}: ${Module}State }`)}({ ${module}: {} });
 `}${If(useRouter)`
 
 const activatedRoute = mockActivatedRoute();`}

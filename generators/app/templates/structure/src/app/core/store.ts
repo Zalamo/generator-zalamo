@@ -10,7 +10,6 @@ import { ApolloModule } from 'apollo-angular';
 import { PersistedQueryNetworkInterface } from 'persistgraphql';
 
 /* Types and Queries */
-import { AppState } from '../../types';
 import queryMap from '../../persistent-queries.json';
 
 const networkInterface = new PersistedQueryNetworkInterface({

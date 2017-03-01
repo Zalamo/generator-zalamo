@@ -11,7 +11,7 @@ import { apolloOperationName } from '../common';
 import { ApolloEvent } from '../core/store';${If(samples)`
 
 /* Types */
-import { ${Name}${If(samples)`/*, GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`} } from '../../types';`}
+import { ${Name}${If(samples)`/*, GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`} } from '../../types/graphql';`}
 
 /**
  * ${Name} state

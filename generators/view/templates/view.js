@@ -13,7 +13,7 @@ import { AliveState } from '../../common';`}
 import { ${Module}Actions } from '../${module}.actions';`}${If(samples)`
 
 /* Types */
-import { ${Module} } from '../../../types';`}
+import { ${Module} } from '../../../types/graphql';`}
 
 /**
  * ${description}

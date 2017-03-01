@@ -7,7 +7,8 @@ import { ApolloAction } from 'apollo-client/actions';
 import { cloneDeep } from 'lodash';
 
 /* C&C */
-import { apolloOperationName } from '../common';${If(samples)`
+import { apolloOperationName } from '../common';
+import { ApolloEvent } from '../core/store';${If(samples)`
 
 /* Types */
 import { ${Name}${If(samples)`/*, GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`} } from '../../types';`}
@@ -50,8 +51,8 @@ export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
       state = cloneDeep(state);
       state.current${Name}Id = action.payload;
       break;
-    case 'APOLLO_QUERY_RESULT':
-    case 'APOLLO_QUERY_RESULT_CLIENT':
+    case ApolloEvent.QUERY_RESULT:
+    case ApolloEvent.QUERY_RESULT_CLIENT:
       if (apolloOperationName(action) === 'getAll${Name}s') {
         state = cloneDeep(state);
         state.${name}s = (${type(`GetAll${Name}sQuery.Result`)} action.result.data).${name}s;
@@ -61,7 +62,7 @@ export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
         Object.assign(state.${name}s.find(({id}) => id === updated${Name}.id), updated${Name});
       }
       break;
-    case 'APOLLO_MUTATION_RESULT':
+    case ApolloEvent.MUTATION_RESULT:
       if (apolloOperationName(action) === 'modify${Name}') {
         state = cloneDeep(state);
         let diff = (${type(`Modify${Name}Mutation.Result`)} action.result.data).modify${Name};

@@ -34,6 +34,20 @@ export function provideClient(): ApolloClient {
 
 export const ProvidedApolloModule = ApolloModule.forRoot(provideClient);
 
+export enum ApolloEvent {
+  QUERY_RESULT = <any> 'APOLLO_QUERY_RESULT',
+  QUERY_ERROR = <any> 'APOLLO_QUERY_ERROR',
+  QUERY_INIT = <any> 'APOLLO_QUERY_INIT',
+  QUERY_RESULT_CLIENT = <any> 'APOLLO_QUERY_RESULT_CLIENT',
+  QUERY_STOP = <any> 'APOLLO_QUERY_STOP',
+  MUTATION_INIT = <any> 'APOLLO_MUTATION_INIT',
+  MUTATION_RESULT = <any> 'APOLLO_MUTATION_RESULT',
+  MUTATION_ERROR = <any> 'APOLLO_MUTATION_ERROR',
+  UPDATE_QUERY_RESULT = <any> 'APOLLO_UPDATE_QUERY_RESULT',
+  STORE_RESET = <any> 'APOLLO_STORE_RESET',
+  SUBSCRIPTION_RESULT = <any> 'APOLLO_SUBSCRIPTION_RESULT',
+}
+
 /**
  * App store interface
  */

@@ -54,6 +54,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(reducer, rex`import { ApolloAction } from 'apollo-client/actions';`);
     assert.fileContent(reducer, rex`import { cloneDeep } from 'lodash';`);
     assert.fileContent(reducer, rex`import { apolloOperationName } from '../common';`);
+    assert.fileContent(reducer, rex`import { ApolloEvent } from '../core/store';`);
 
     assert.fileContent(router, rex`import { NgModule } from '@angular/core';`);
     assert.fileContent(router, rex`import { RouterModule, Routes } from '@angular/router';`);
@@ -240,8 +241,8 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
             state = cloneDeep(state);
             state.currentTestId = action.payload;
             break;
-          case 'APOLLO_QUERY_RESULT':
-          case 'APOLLO_QUERY_RESULT_CLIENT':
+          case ApolloEvent.QUERY_RESULT:
+          case ApolloEvent.QUERY_RESULT_CLIENT:
             if (apolloOperationName(action) === 'getAllTests') {
               state = cloneDeep(state);
               state.tests = (${type('GetAllTestsQuery.Result')} action.result.data).tests;
@@ -251,7 +252,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
               Object.assign(state.tests.find(({id}) => id === updatedTest.id), updatedTest);
             }
             break;
-          case 'APOLLO_MUTATION_RESULT':
+          case ApolloEvent.MUTATION_RESULT:
             if (apolloOperationName(action) === 'modifyTest') {
               state = cloneDeep(state);
               let diff = (${type('ModifyTestMutation.Result')} action.result.data).modifyTest;

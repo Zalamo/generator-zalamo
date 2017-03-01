@@ -43,6 +43,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`import { Injectable } from '@angular/core';`);
     assert.fileContent(actions, rex`import { Apollo } from 'apollo-angular';`);
     assert.fileContent(actions, rex`import { NgRedux } from '@angular-redux/store';`);
+    assert.fileContent(actions, rex`import { Observable } from 'rxjs';`);
     assert.fileContent(actions, rex`
     import { TestState${If(samples)`, INITIAL_STATE, TestReducerActions`} } from './test.reducer';
 `);

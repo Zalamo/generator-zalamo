@@ -4,6 +4,7 @@ module.exports = ({ samples, name, Name }) =>
 import { Injectable } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
 import { Apollo } from 'apollo-angular';
+import { Observable } from 'rxjs';
 
 /* ${Name} module pieces */
 import { ${Name}State${If(samples)`, INITIAL_STATE, ${Name}ReducerActions`} } from './${name}.reducer';${If(samples)`

@@ -6,7 +6,7 @@ import { NgRedux } from '@angular-redux/store';
 import { Apollo } from 'apollo-angular';
 
 /* ${Name} module pieces */
-import { ${Name}State${If(samples)`, INITIAL_STATE`} } from './${name}.reducer';
+import { ${Name}State${If(samples)`, INITIAL_STATE, ${Name}ReducerActions`} } from './${name}.reducer';
 
 /* Types */
 import {
@@ -71,7 +71,7 @@ export class ${Name}Actions {
     if (!Number.isInteger(id)) {
       id = INITIAL_STATE.current${Name}Id;
     }
-    this.store.dispatch({ type: '${Name}_SET_CURRENT', payload: id });
+    this.store.dispatch({ type: ${Name}ReducerActions.SET_CURRENT, payload: id });
   }
   */`}
 }

@@ -43,7 +43,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`import { Injectable } from '@angular/core';`);
     assert.fileContent(actions, rex`import { Apollo } from 'apollo-angular';`);
     assert.fileContent(actions, rex`import { NgRedux } from '@angular-redux/store';`);
-    assert.fileContent(actions, rex`import { TestState${If(samples)`, INITIAL_STATE`} } from './test.reducer';`);
+    assert.fileContent(actions, rex`import { TestState${If(samples)`, INITIAL_STATE, TestReducerActions`} } from './test.reducer';`);
     assert.fileContent(actions, rex`
       import { 
         Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
@@ -216,7 +216,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
         if (!Number.isInteger(id)) {
           id = INITIAL_STATE.currentTestId;
         }
-        this.store.dispatch({ type: 'Test_SET_CURRENT', payload: id });
+        this.store.dispatch({ type: TestReducerActions.SET_CURRENT, payload: id });
       }
       */`}
       }
@@ -225,10 +225,10 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   it('should create an empty Enum for action types', () => {
     assert.fileContent(reducer, rex`
       /**
-       * Reducer actions enum (for Intellij IDEs hinting)
+       * Reducer actions enum
        */
-      declare enum TestReducerActions {${If(samples)`
-        TEST_SET_CURRENT
+      export enum TestReducerActions {${If(samples)`
+        SET_CURRENT = <any> TEST_SET_CURRENT
       `}}
     `);
   });
@@ -236,7 +236,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(reducer, rex`
       export function testReducer(state = INITIAL_STATE, action: ApolloAction) {
         switch (action.type) {${If(samples)`/*
-          case 'TEST_SET_CURRENT':
+          case TestReducerActions.SET_CURRENT:
             state = cloneDeep(state);
             state.currentTestId = action.payload;
             break;

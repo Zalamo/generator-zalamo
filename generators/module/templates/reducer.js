@@ -35,10 +35,10 @@ export const INITIAL_STATE = {${If(samples)`
 // Note: Remember to use \`apolloOperationName\` to check the query name
 
 /**
- * Reducer actions enum (for Intellij IDEs hinting)
+ * Reducer actions enum
  */
-declare enum ${Name}ReducerActions {${If(samples)`
-  ${snakeCase(Name).toUpperCase()}_SET_CURRENT
+export enum ${Name}ReducerActions {${If(samples)`
+  SET_CURRENT = <any> ${snakeCase(Name).toUpperCase()}_SET_CURRENT
 `}}
 
 /**
@@ -46,7 +46,7 @@ declare enum ${Name}ReducerActions {${If(samples)`
  */
 export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
   switch (action.type) {${If(samples)`/*
-    case '${snakeCase(Name).toUpperCase()}_SET_CURRENT':
+    case ${Name}ReducerActions.SET_CURRENT:
       state = cloneDeep(state);
       state.current${Name}Id = action.payload;
       break;

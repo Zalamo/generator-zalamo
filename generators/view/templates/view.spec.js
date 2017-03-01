@@ -8,14 +8,20 @@ import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';${If(useRouter)`
 import { ActivatedRoute } from '@angular/router';
 
 /* C&C */
-import { RouterLinkStubDirective, mockActivatedRoute } from '../../common/mocks';`}${If(useActions)`
+import { RouterLinkStubDirective, mockActivatedRoute${If(useRedux)`, mockNgRedux`} } from '../../common/mocks';`}${If(useActions)`
 
 /* ${Module} module pieces */
 import { mock${Module}Actions } from '../${module}.spec';
 import { ${Module}Actions } from '../${module}.actions';`}
 
 /* ${Name} view */
-import { ${Module}${Name}View } from './${name}.view';${If(useRouter)`
+import { ${Module}${Name}View } from './${name}.view';${If(useRedux)`
+
+/* Types */
+import { AppState } from '../../../types';
+
+const { ngRedux, mediator } = mockNgRedux${type('AppState')}({ posts: [] });
+`}${If(useRouter)`
 
 const activatedRoute = mockActivatedRoute();`}
 
@@ -41,7 +47,9 @@ describe('${Module}', () => {
         .compileComponents();
     }));
 
-    beforeEach(() => {
+    beforeEach(() => {${If(useRedux)`
+      NgRedux.instance = ngRedux;
+`}
       fixture = TestBed.createComponent(${Module}${Name}View);
       component = fixture.componentInstance;
       element = fixture.nativeElement;

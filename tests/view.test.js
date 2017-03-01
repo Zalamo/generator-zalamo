@@ -38,9 +38,12 @@ const describeSuite = (title, config) => describe(title, () => {
     assert[ contentIf(useActions) ](spec, rex`import { TestActions } from '../test.actions';`);
 
     assert[ contentIf(useRedux && samples) ](view, rex`import { select } from '@angular-redux/store';`);
+    assert[ contentIf(useRedux) ](spec, rex`import { AppState } from '../../../types';`);
 
     assert[ contentIf(useRouter) ](view, rex`import { ActivatedRoute } from '@angular/router';`);
-    assert[ contentIf(useRouter) ](spec, rex`import { RouterLinkStubDirective, mockActivatedRoute } from '../../common/mocks';`);
+    assert[ contentIf(useRouter) ](spec, rex`
+    import { RouterLinkStubDirective, mockActivatedRoute${If(useRedux)`, mockNgRedux`} } from '../../common/mocks';
+`);
 
     assert.fileContent(spec, rex`import { async, ComponentFixture, TestBed } from '@angular/core/testing';`);
     assert.fileContent(spec, rex`import { By } from '@angular/platform-browser';`);
@@ -145,6 +148,12 @@ const describeSuite = (title, config) => describe(title, () => {
   // suite
   it('should create an ActivatedRoute mock if router is used', () => {
     assert[ contentIf(useRouter) ](spec, rex`const activatedRoute = mockActivatedRoute();`);
+  });
+  it('should create an NgRedux mock if redux is used', () => {
+    assert[ contentIf(useRedux) ](spec, rex`const { ngRedux, mediator } = mockNgRedux${type('AppState')}({ posts: [] });`);
+  });
+  it('should mock ngRedux global instance before each test if redux is used', () => {
+    assert[ contentIf(useRedux) ](spec, rex`beforeEach(() => {\nNgRedux.instance = ngRedux;`);
   });
   it('should configure module before each test with NO_ERRORS_SCHEMA', () => {
     assert.fileContent(spec, rex`

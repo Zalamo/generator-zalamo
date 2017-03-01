@@ -1,13 +1,12 @@
 const { If, type } = require('../../helpers');
 module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module, description }) =>
   `/* 3rd party modules */
-import { Component${If(samples)`, OnInit`} } from '@angular/core';${If(useRouter)`
+import { Component, ChangeDetectionStrategy, ViewEncapsulation${If(samples)`, OnInit`} } from '@angular/core';${If(useRouter)`
 import { ActivatedRoute } from '@angular/router';`}${If(samples)`${If(useRedux)`
 import { select } from '@angular-redux/store';`}
-import { Observable } from 'rxjs';`}
+import { Observable } from 'rxjs';`}${If(useActions)`${If(samples)`
 
 /* C&C Modules */
-import { changeDetection, encapsulation } from '../../common/config';${If(useActions)`${If(samples)`
 import { AliveState } from '../../common';`}
 
 /* ${Module} module pieces */
@@ -20,7 +19,8 @@ import { ${Module} } from '../../../types';`}
  * ${description}
  */
 @Component({
-  changeDetection, encapsulation,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated,
   selector: '${module}-${name}-view',
   template: \`${If(samples)`
     <h1>Hello ${Module}${Name}View</h1>

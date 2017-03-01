@@ -8,8 +8,8 @@ import { ApolloModule } from 'apollo-angular';
 import { AppState } from '../../../types/index';
 
 /* Reducers */
-import { counterReducer } from '../counter/counter.reducer';
-import { postsReducer } from '../posts/posts.reducer';
+import { counterReducer, CounterState } from '../counter/counter.reducer';
+import { postsReducer, PostsState } from '../posts/posts.reducer';
 
 export const client = new ApolloClient({
   networkInterface: createNetworkInterface({
@@ -24,6 +24,14 @@ export function provideClient(): ApolloClient {
 }
 
 export const ProvidedApolloModule = ApolloModule.forRoot(provideClient);
+
+/**
+ * App store interface
+ */
+export interface AppState {
+  counter?: CounterState;
+  posts?: PostsState;
+}
 
 @NgModule({
   imports: [NgReduxModule],

@@ -35,6 +35,13 @@ export function provideClient(): ApolloClient {
 export const ProvidedApolloModule = ApolloModule.forRoot(provideClient);
 
 /**
+ * App store interface
+ */
+export interface AppState {
+  // Modules states
+}
+
+/**
  * App store module
  */
 @NgModule({

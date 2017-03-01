@@ -43,9 +43,10 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`import { Injectable } from '@angular/core';`);
     assert.fileContent(actions, rex`import { Apollo } from 'apollo-angular';`);
     assert.fileContent(actions, rex`import { NgRedux } from '@angular-redux/store';`);
+    assert.fileContent(actions, rex`import { TestState${If(samples)`, INITIAL_STATE`} } from './test.reducer';`);
     assert.fileContent(actions, rex`
       import { 
-        AppState, Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
+        Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
         GetAllTestsQuery, GetTestQuery, ModifyTestMutation*/`}
       } from '../../types';
     `);
@@ -61,11 +62,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(spec, rex`import { mockApollo, mockNgRedux } from '../common/mocks';`);
     assert.fileContent(spec, rex`import { TestActions } from './test.actions';`);
     assert.fileContent(spec, rex`import { testReducer } from './test.reducer';`);
-    assert.fileContent(spec, rex`import { AppState } from '../../types';`);
 
     assert.fileContent(index, rex`import { TestActions } from './test.actions';`);
 
-    assert[ contentIf(samples) ](actions, rex`import { INITIAL_STATE } from './test.reducer';`);
   });
   it('should import new module in index', () => {
     assert.fileContent(appModulePath, rexAny([
@@ -96,9 +95,9 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   it('should only import reducer in store if `registerReducer` is true', () => {
     assert.fileContent(storePath, rex`
       /* Reducers */
-      import { counterReducer } from '../counter/counter.reducer';
-      import { postsReducer } from '../posts/posts.reducer';${If(registerReducer)`
-      import { testReducer } from '../+test/test.reducer';`}
+      import { counterReducer, CounterState } from '../counter/counter.reducer';
+      import { postsReducer, PostsState } from '../posts/posts.reducer';${If(registerReducer)`
+      import { testReducer, TestState } from '../+test/test.reducer';`}
       
       export const client
     `);
@@ -112,6 +111,15 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
         router: routerReducer,
         apollo: client.reducer() as Reducer${type('Action')}
       })
+    `);
+  });
+  it('should only add state interface to AppState if `registerReducer` is true', () => {
+    assert.fileContent(storePath, rex`
+      export interface AppState {
+        counter?: CounterState;
+        posts?: PostsState;${If(registerReducer)`
+        test?: TestState;`}
+      }
     `);
   });
   it('should document module', () => {
@@ -164,7 +172,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
       @Injectable()
       export class TestActions {
         constructor(private apollo: Apollo,
-                    private store: NgRedux${type('AppState')}) {/* */}${If(samples)`
+                    private store: NgRedux${type(`{ test: TestState }`)}) {/* */}${If(samples)`
 
       /**
        * Get all tests
@@ -282,7 +290,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
           };
         };
 
-        const { ngRedux, mediator } = mockNgRedux${type('AppState')}({ test: [] });
+        const { ngRedux, mediator } = mockNgRedux${type(`{ test: TestState }`)}({ test: [] });
       `)
   });
   it('should have a general suite for the module', () => {

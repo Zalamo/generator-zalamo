@@ -2,11 +2,6 @@ import { ApolloQueryObservable, Apollo } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
 import { Observable } from 'rxjs';
 
-import { Post } from './graphql';
-
-export interface AppState {
-}
-
 export type ApolloQuery<T> = ApolloQueryObservable<T>;
 export type ApolloMutation<T> = Observable<ApolloQueryResult<T>>;
 

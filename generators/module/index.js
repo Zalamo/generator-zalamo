@@ -56,7 +56,15 @@ module.exports = class extends ModuleUpdater {
     let modulePath = this.destinationPath(`src/app/core/store.ts`);
     let src = this.fs.read(modulePath);
 
-    src = this._addImport(src, `.reducer';`, `import { ${ItemName} } from '${ItemPath}';`, `/* Reducers */`);
+    src = this._addImport(src, `.reducer';`, `import { ${ItemName}, ${Name}State } from '${ItemPath}';`, `/* Reducers */`);
+
+    src = this._addToMethodParams(
+      src,
+      'export interface AppState ',
+      `${kebabCasedName}?: ${Name}State`,
+      -1,
+      ';'
+    );
 
     src = this._addToMethodParams(
       src,

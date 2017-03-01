@@ -3,14 +3,14 @@ module.exports = ({ samples, name, Name }) =>
   `/* 3rd party modules */
 import { Injectable } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
-import { Apollo } from 'apollo-angular';${If(samples)`
+import { Apollo } from 'apollo-angular';
 
 /* ${Name} module pieces */
-import { INITIAL_STATE } from './${name}.reducer';`}
+import { ${Name}State${If(samples)`, INITIAL_STATE`} } from './${name}.reducer';
 
 /* Types */
 import {
-  AppState, Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
+  Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
   GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`}
 } from '../../types';${If(samples)`
 
@@ -27,7 +27,7 @@ import modify${Name} from './queries/modify${Name}.graphql';
 @Injectable()
 export class ${Name}Actions {
   constructor(private apollo: Apollo,
-              private store: NgRedux${type('AppState')}) {/* */}${If(samples)`
+              private store: NgRedux${type(`{ ${name}: ${Name}State }`)}) {/* */}${If(samples)`
 
   /**
    * Get all ${name}s

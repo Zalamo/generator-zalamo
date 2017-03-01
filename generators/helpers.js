@@ -155,7 +155,7 @@ class ModuleUpdater extends Generator {
     });
   }
 
-  _addToMethodParams(src, method, entry, position) {
+  _addToMethodParams(src, method, entry, position, splitBy = ',') {
     if (src.includes(entry)) {
       return src;
     }
@@ -169,7 +169,7 @@ class ModuleUpdater extends Generator {
     const brackets = bracketClosingMap[ src[ start ] ];
     const end = findClosing(src, start, brackets);
 
-    let { type, before, after } = this._staticAddItem(src.slice(start, end + 1), entry, position);
+    let { type, before, after } = this._staticAddItem(src.slice(start, end + 1), entry, position, splitBy);
 
     method = method.replace(...escapeRegExp);
     before = before.replace(...escapeRegExp);
@@ -195,13 +195,13 @@ class ModuleUpdater extends Generator {
     return src.replace(new RegExp(`(${part}: \\[\\s*)${before}(\\s*\\])`), `$1${after}$2`);
   }
 
-  _staticAddItem(src, entry, position) {
+  _staticAddItem(src, entry, position, splitBy = ',') {
     if (src.includes(entry)) {
       return src;
     }
     let { 1: type, 2: leadingWhitespace } = src.match(/([\[{])(\s+)\S/) || [];
     let before = src.slice(src.indexOf(type) + 1, -1).trim();
-    let chunks = split(before, ',', true);
+    let chunks = split(before, splitBy, true);
 
     if (typeof position === 'object' && (position.before || position.after)) {
       chunks.splice(chunks.findIndex(chunk => (position.before || position.after).test(chunk)), 0, entry);
@@ -211,7 +211,7 @@ class ModuleUpdater extends Generator {
       chunks.push(entry);
     }
 
-    return { type, before, after: chunks.join(`,${leadingWhitespace}`) };
+    return { type, before, after: chunks.join(`${splitBy}${leadingWhitespace}`).trim() };
   }
 
   _addImport(src, target, entry, category = `/* ${_.capitalize(this.type)}s */`) {

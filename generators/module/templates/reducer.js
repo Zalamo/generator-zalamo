@@ -10,12 +10,12 @@ import { cloneDeep } from 'lodash';
 import { apolloOperationName } from '../common';${If(samples)`
 
 /* Types */
-import { ${Name}${If(samples)`/*, GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`} } from '../../types';
+import { ${Name}${If(samples)`/*, GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`} } from '../../types';`}
 
 /**
  * ${Name} state
  */
-export interface ${Name}State {
+export interface ${Name}State {${If(samples)`
   /**
    * Available ${name}s
    */
@@ -25,7 +25,7 @@ export interface ${Name}State {
    * Current ${name} ID
    */
   current${Name}Id: number;
-}`}
+`}}
 
 export const INITIAL_STATE = {${If(samples)`
   ${name}s: [],

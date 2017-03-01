@@ -12,7 +12,6 @@ import { ${Name}Actions } from './${name}.actions';
 import { ${name}Reducer } from './${name}.reducer';
 
 /* Types */
-import { AppState } from '../../types';
 
 /**
  * Function to generate ${Name}Actions mocking object
@@ -24,7 +23,7 @@ export const mock${Name}Actions = () => {
   };
 };
 
-const { ngRedux, mediator } = mockNgRedux${type('AppState')}({ ${name}: [] });
+const { ngRedux, mediator } = mockNgRedux${type(`{ ${name}: ${Name}State }`)}({ ${name}: [] });
 
 describe('${Name}', () => {
   describe('Actions', () => {

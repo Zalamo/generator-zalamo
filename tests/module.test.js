@@ -46,7 +46,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
     assert.fileContent(actions, rex`import { TestState${If(samples)`, INITIAL_STATE, TestReducerActions`} } from './test.reducer';`);
     assert.fileContent(actions, rex`
       import { 
-        Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
+        Vars, ApolloQuery, ApolloMutation${If(samples)`/*,
         GetAllTestsQuery, GetTestQuery, ModifyTestMutation*/`}
       } from '../../types';
     `);
@@ -181,7 +181,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        */
       /*
       public getAllTests(): ApolloQuery${type(`GetAllTestsQuery.Result`)} {
-        return (this.apollo as Cast${type(`GetAllTestsQuery.Variables`)})
+        return (this.apollo as Vars${type(`GetAllTestsQuery.Variables`)})
           .watchQuery({ query: getAllTests });
       }
       */
@@ -192,7 +192,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        */
       /*
       public getTest(id: number): ApolloQuery${type(`GetTestQuery.Result`)} {
-        return (this.apollo as Cast${type(`GetTestQuery.Variables`)})
+        return (this.apollo as Vars${type(`GetTestQuery.Variables`)})
           .watchQuery({ query: getTest, variables: { id } });
       }
       */
@@ -203,7 +203,7 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
        */
       /*
       public modifyTest(id: number): ApolloMutation${type(`ModifyTestMutation.Result`)} {
-        return (this.apollo as Cast${type(`ModifyTestMutation.Variables`)})
+        return (this.apollo as Vars${type(`ModifyTestMutation.Variables`)})
           .watchQuery({ query: modifyTest, variables: { id } });
       }
       */

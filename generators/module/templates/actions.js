@@ -10,7 +10,7 @@ import { ${Name}State${If(samples)`, INITIAL_STATE, ${Name}ReducerActions`} } fr
 
 /* Types */
 import {
-  Cast, ApolloQuery, ApolloMutation${If(samples)`/*,
+  Vars, ApolloQuery, ApolloMutation${If(samples)`/*,
   GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`}
 } from '../../types';${If(samples)`
 
@@ -35,7 +35,7 @@ export class ${Name}Actions {
    */
   /*
   public getAll${Name}s(): ApolloQuery${type(`GetAll${Name}sQuery.Result`)} {
-    return (this.apollo as Cast${type(`GetAll${Name}sQuery.Variables`)})
+    return (this.apollo as Vars${type(`GetAll${Name}sQuery.Variables`)})
       .watchQuery({ query: getAll${Name}s });
   }
   */
@@ -46,7 +46,7 @@ export class ${Name}Actions {
    */
   /*
   public get${Name}(id: number): ApolloQuery${type(`Get${Name}Query.Result`)} {
-    return (this.apollo as Cast${type(`Get${Name}Query.Variables`)})
+    return (this.apollo as Vars${type(`Get${Name}Query.Variables`)})
       .watchQuery({ query: get${Name}, variables: { id } });
   }
   */
@@ -57,7 +57,7 @@ export class ${Name}Actions {
    */
   /*
   public modify${Name}(id: number): ApolloMutation${type(`Modify${Name}Mutation.Result`)} {
-    return (this.apollo as Cast${type(`Modify${Name}Mutation.Variables`)})
+    return (this.apollo as Vars${type(`Modify${Name}Mutation.Variables`)})
       .watchQuery({ query: modify${Name}, variables: { id } });
   }
   */

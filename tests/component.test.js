@@ -33,6 +33,8 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
   });
   it('should add required imports', () => {
     assert.fileContent(component, rex`import { Component${ifSamples`, Input`} } from '@angular/core';`);
+    assert.fileContent(component, rex`import { changeDetection, encapsulation } from '../../common/config';`);
+
     assert[ contentIf(useActions) ](component, rex`import { TestActions } from '../test.actions';`);
     assert[ contentIf(useActions) ](spec, rex`import { mockTestActions } from '../test.spec';`);
     assert[ contentIf(useActions) ](spec, rex`import { TestActions } from '../test.actions';`);
@@ -81,6 +83,7 @@ const describeSuite = (title, { samples, useActions, useRouter, sampleModule }) 
   it('should create an empty component class', () => {
     assert.fileContent(component, rex`
       @Component({
+        changeDetection, encapsulation,
         selector: 'test-item',
         template: \`
           ${ifSamples`<h1>Hello {{me}}</h1>`}

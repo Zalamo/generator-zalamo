@@ -32,10 +32,14 @@ const describeSuite = (title, config) => describe(title, () => {
   });
   it('should add required imports', () => {
     assert.fileContent(view, rex`import { Component${ifSamples`, OnInit`} } from '@angular/core';`);
+    assert.fileContent(view, rex`import { changeDetection, encapsulation } from '../../common/config';`);
+
     assert[ contentIf(samples) ](view, rex`import { Observable } from 'rxjs';`);
     assert[ contentIf(useActions) ](view, rex`import { TestActions } from '../test.actions';`);
     assert[ contentIf(useActions) ](spec, rex`import { mockTestActions } from '../test.spec';`);
     assert[ contentIf(useActions) ](spec, rex`import { TestActions } from '../test.actions';`);
+
+    assert[ contentIf(useActions && samples) ](view, rex`import { AliveState } from '../../common';`);
 
     assert[ contentIf(useRedux && samples) ](view, rex`import { select } from '@angular-redux/store';`);
     assert[ contentIf(useRedux) ](spec, rex`import { AppState } from '../../../types';`);
@@ -105,6 +109,7 @@ const describeSuite = (title, config) => describe(title, () => {
   it('should create an empty view class', () => {
     assert.fileContent(view, rex`
       @Component({
+        changeDetection, encapsulation,
         selector: 'test-item-view',
         template: \`${If(samples)`
           <h1>Hello TestItemView</h1>

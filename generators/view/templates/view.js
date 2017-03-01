@@ -4,10 +4,11 @@ module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module
 import { Component${If(samples)`, OnInit`} } from '@angular/core';${If(useRouter)`
 import { ActivatedRoute } from '@angular/router';`}${If(samples)`${If(useRedux)`
 import { select } from '@angular-redux/store';`}
-import { Observable } from 'rxjs';`}${If(useActions)`
+import { Observable } from 'rxjs';`}
 
 /* C&C Modules */
-import { AliveState } from '../../common';
+import { changeDetection, encapsulation } from '../../common/config';${If(useActions)`${If(samples)`
+import { AliveState } from '../../common';`}
 
 /* ${Module} module pieces */
 import { ${Module}Actions } from '../${module}.actions';`}${If(samples)`
@@ -19,6 +20,7 @@ import { ${Module} } from '../../../types';`}
  * ${description}
  */
 @Component({
+  changeDetection, encapsulation,
   selector: '${module}-${name}-view',
   template: \`${If(samples)`
     <h1>Hello ${Module}${Name}View</h1>

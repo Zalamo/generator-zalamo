@@ -241,19 +241,18 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
           case ApolloEvent.QUERY_RESULT:
           case ApolloEvent.QUERY_RESULT_CLIENT:
             if (apolloOperationName(action) === 'getAllTests') {
-              state = cloneDeep(state);
-              state.tests = (${type('GetAllTestsQuery.Result')} action.result.data).tests;
+              Object.assign(cloneDeep(state), action.result.data)
             } else if (apolloOperationName(action) === 'getTest') {
               state = cloneDeep(state);
-              let updatedTest = (${type('GetTestQuery.Result')} action.result.data).test;
-              Object.assign(state.tests.find(({id}) => id === updatedTest.id), updatedTest);
+              const { test } = action.result.data as GetTestQuery.Result;
+              Object.assign(state.tests.find(({ id }) => id === test.id), test);
             }
             break;
           case ApolloEvent.MUTATION_RESULT:
             if (apolloOperationName(action) === 'modifyTest') {
               state = cloneDeep(state);
-              let diff = (${type('ModifyTestMutation.Result')} action.result.data).modifyTest;
-              Object.assign(state.posts.find(({id}) => id === diff.id), diff);
+              const { modifyTest: diff } = action.result.data as ModifyTestMutation.Result;
+              Object.assign(state.posts.find(({ id }) => id === diff.id), diff);
             }
             break;*/`}
           default:

@@ -54,19 +54,18 @@ export function ${name}Reducer(state = INITIAL_STATE, action: ApolloAction) {
     case ApolloEvent.QUERY_RESULT:
     case ApolloEvent.QUERY_RESULT_CLIENT:
       if (apolloOperationName(action) === 'getAll${Name}s') {
-        state = cloneDeep(state);
-        state.${name}s = (${type(`GetAll${Name}sQuery.Result`)} action.result.data).${name}s;
+        Object.assign(cloneDeep(state), action.result.data)
       } else if (apolloOperationName(action) === 'get${Name}') {
         state = cloneDeep(state);
-        let updated${Name} = (${type(`Get${Name}Query.Result`)} action.result.data).${name};
-        Object.assign(state.${name}s.find(({id}) => id === updated${Name}.id), updated${Name});
+        const { ${name} } = action.result.data as Get${Name}Query.Result;
+        Object.assign(state.${name}s.find(({ id }) => id === ${name}.id), ${name});
       }
       break;
     case ApolloEvent.MUTATION_RESULT:
       if (apolloOperationName(action) === 'modify${Name}') {
         state = cloneDeep(state);
-        let diff = (${type(`Modify${Name}Mutation.Result`)} action.result.data).modify${Name};
-        Object.assign(state.posts.find(({id}) => id === diff.id), diff);
+        const { modify${Name}: diff } = action.result.data as Modify${Name}Mutation.Result;
+        Object.assign(state.posts.find(({ id }) => id === diff.id), diff);
       }
       break;*/`}
     default:

@@ -37,9 +37,10 @@ module.exports = class extends ModuleUpdater {
 
   writing() {
     super.writing();
+    const prefix = this.options.unprefixed ? '' : '+';
     this.fs.copy(
       join(this.templatePath('queries'), '**'),
-      this.destinationPath(`src/app/+${_.kebabCase(this.options.Name)}/queries`)
+      this.destinationPath(`src/app/${prefix}${_.kebabCase(this.options.Name)}/queries`)
     );
     this._updateModule();
     if (this.props.registerReducer) {
@@ -52,7 +53,8 @@ module.exports = class extends ModuleUpdater {
     const ItemName = `${_.camelCase(Name)}Reducer`;
     const lowerCamelCasedName = _.lowerFirst(ItemName);
     const kebabCasedName = _.kebabCase(Name);
-    const ItemPath = `../+${kebabCasedName}/${kebabCasedName}.reducer`;
+    const prefix = this.options.unprefixed ? '' : '+';
+    const ItemPath = `../${prefix}${kebabCasedName}/${kebabCasedName}.reducer`;
 
     let modulePath = this.destinationPath(`src/app/core/store.ts`);
     let src = this.fs.read(modulePath);
@@ -87,13 +89,14 @@ module.exports = class extends ModuleUpdater {
   _updateModule() {
     let { Name } = this.options;
     const ItemName = `${Name}Module`;
-    const ItemPath = `./+${_.kebabCase(Name)}`;
+    const prefix = this.options.unprefixed ? '' : '+';
+    const ItemPath = `./${prefix}${_.kebabCase(Name)}`;
 
     let modulePath = this.destinationPath(`src/app/app.module.ts`);
     let src = this.fs.read(modulePath);
 
     src = this._addToNgModule(src, 'imports', ItemName, { before: /BaseRoutesModule/ });
-    src = this._addImport(src, `from './+`, `import { ${ItemName} } from '${ItemPath}';`, '/* Feature Modules */');
+    src = this._addImport(src, `from './${prefix}`, `import { ${ItemName} } from '${ItemPath}';`, '/* Feature Modules */');
 
     this.fs.write(modulePath, src);
   }

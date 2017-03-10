@@ -37,7 +37,8 @@ module.exports = class View extends Component {
     const kebabCasedModule = kebabCase(Module);
     const ItemName = `${Module}${Name}View`;
     const ItemPath = `./views/${kebabCase(Name)}.view`;
-    const routerPath = this.destinationPath(`src/app/+${kebabCasedModule}/${kebabCasedModule}.router.ts`);
+    const prefix = this.options.unprefixed ? '' : '+';
+    const routerPath = this.destinationPath(`src/app/${prefix}${kebabCasedModule}/${kebabCasedModule}.router.ts`);
 
     let src = this.fs.read(routerPath);
 

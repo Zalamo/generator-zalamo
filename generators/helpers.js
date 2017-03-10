@@ -127,6 +127,7 @@ class ModuleUpdater extends Generator {
     this.type = type;
     this.files = files;
     this.prompts = prompts;
+    this.option('unprefixed');
   }
 
   writing() {
@@ -144,12 +145,14 @@ class ModuleUpdater extends Generator {
     let name = _.kebabCase(Name);
     let module = _.kebabCase(Module);
 
+    const prefix = this.options.unprefixed ? '' : '+';
+
     this.files.forEach(file => {
       let fileName = file === 'index' ? file : `${name}.${file}`;
       let tpl = require(this.templatePath(file));
 
       this.fs.write(
-        this.destinationPath(`src/app/+${module || name}${this.type ? `/${this.type}s/` : '/' }${fileName}.ts`),
+        this.destinationPath(`src/app/${prefix}${module || name}${this.type ? `/${this.type}s/` : '/' }${fileName}.ts`),
         tpl(Object.assign({ Name, name, Module, module }, this.props))
       );
     });

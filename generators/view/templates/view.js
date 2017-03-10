@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { If, type } = require('../../helpers');
 module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module, description }) =>
   `/* 3rd party modules */
@@ -32,8 +33,8 @@ import { ${Module} } from '../../../types/graphql';`}
 })
 export class ${Module}${Name}View${If(samples && useActions)` extends AliveState implements OnInit`} {${
   samples || useRouter || useActions ? `${If(samples)`
-  ${If(useRedux)`@select(['${module}', '${module}s']) `}public ${module}s$: Observable${type(`Array<${Module}>`)};
-  ${If(useRedux)`@select(['${module}', 'current${Module}Id']) `}public current${Module}$: Observable${type('number')};`
+  ${If(useRedux)`@select(['${_.lowerFirst(Module)}', '${module}s']) `}public ${module}s$: Observable${type(`Array<${Module}>`)};
+  ${If(useRedux)`@select(['${_.lowerFirst(Module)}', 'current${Module}Id']) `}public current${Module}$: Observable${type('number')};`
       }${If(useActions || useRouter)`
   constructor(${If(useRouter)`private route: ActivatedRoute${If(useActions)`,
               `}`}${If(useActions)`public actions: ${Module}Actions`}) {${samples && useActions ? `

@@ -50,6 +50,7 @@ module.exports = class extends ModuleUpdater {
   _updateStore() {
     let { Name } = this.options;
     const ItemName = `${_.camelCase(Name)}Reducer`;
+    const lowerCamelCasedName = _.lowerFirst(ItemName);
     const kebabCasedName = _.kebabCase(Name);
     const ItemPath = `../+${kebabCasedName}/${kebabCasedName}.reducer`;
 
@@ -61,7 +62,7 @@ module.exports = class extends ModuleUpdater {
     src = this._addToMethodParams(
       src,
       'export interface AppState ',
-      `${kebabCasedName}?: ${Name}State;`,
+      `${lowerCamelCasedName}?: ${Name}State;`,
       'end',
       '\n'
     );
@@ -69,14 +70,14 @@ module.exports = class extends ModuleUpdater {
       src,
       'export interface AppState ',
       `/** State for ${Name} Module */`,
-      { before: new RegExp(`${kebabCasedName}\\?: ${Name}State`)},
+      { before: new RegExp(`${lowerCamelCasedName}\\?: ${Name}State`)},
       '\n'
     );
 
     src = this._addToMethodParams(
       src,
       'combineReducers<AppState>(',
-      `${kebabCasedName}: ${ItemName}`,
+      `${lowerCamelCasedName}: ${ItemName}`,
       { before: /routerReducer/ }
     );
 

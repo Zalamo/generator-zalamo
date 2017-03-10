@@ -51,7 +51,7 @@ module.exports = class extends ModuleUpdater {
   _updateStore() {
     let { Name } = this.options;
     const ItemName = `${_.camelCase(Name)}Reducer`;
-    const lowerCamelCasedName = _.lowerFirst(ItemName);
+    const lowerCamelCasedName = _.lowerFirst(Name);
     const kebabCasedName = _.kebabCase(Name);
     const prefix = this.options.unprefixed ? '' : '+';
     const ItemPath = `../${prefix}${kebabCasedName}/${kebabCasedName}.reducer`;

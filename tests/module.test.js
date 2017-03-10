@@ -115,8 +115,11 @@ const describeSuite = (title, { samples, registerReducer }) => describe(title, (
   it('should only add state interface to AppState if `registerReducer` is true', () => {
     assert.fileContent(storePath, rex`
       export interface AppState {
+        /** State for Counter Module */
         counter?: CounterState;
+        /** State for Posts Module */
         posts?: PostsState;${If(registerReducer)`
+        /** State for Test Module */
         test?: TestState;`}
       }
     `);

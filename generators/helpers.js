@@ -200,6 +200,9 @@ class ModuleUpdater extends Generator {
       return src;
     }
     let { 1: type, 2: leadingWhitespace } = src.match(/([\[{])(\s+)\S/) || [];
+    if (splitBy === '\n' && leadingWhitespace.startsWith('\n')) {
+      leadingWhitespace = leadingWhitespace.substr(1);
+    }
     let before = src.slice(src.indexOf(type) + 1, -1).trim();
     let chunks = split(before, splitBy, true);
 

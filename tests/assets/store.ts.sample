@@ -29,7 +29,9 @@ export const ProvidedApolloModule = ApolloModule.forRoot(provideClient);
  * App store interface
  */
 export interface AppState {
+  /** State for Counter Module */
   counter?: CounterState;
+  /** State for Posts Module */
   posts?: PostsState;
 }
 

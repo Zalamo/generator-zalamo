@@ -61,9 +61,16 @@ module.exports = class extends ModuleUpdater {
     src = this._addToMethodParams(
       src,
       'export interface AppState ',
-      `${kebabCasedName}?: ${Name}State`,
-      -1,
-      ';'
+      `${kebabCasedName}?: ${Name}State;`,
+      'end',
+      '\n'
+    );
+    src = this._addToMethodParams(
+      src,
+      'export interface AppState ',
+      `/** State for ${Name} Module */`,
+      { before: new RegExp(`${kebabCasedName}\\?: ${Name}State`)},
+      '\n'
     );
 
     src = this._addToMethodParams(

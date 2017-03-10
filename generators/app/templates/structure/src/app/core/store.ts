@@ -19,7 +19,7 @@ const networkInterface = new PersistedQueryNetworkInterface({
 
 export const client = new ApolloClient({
   networkInterface,
-  dataIdFromObject: (r: any) => r.id,
+  dataIdFromObject: (r: any) => `${r.__typename}(${r.id})`,
   queryDeduplication: true,
   connectToDevTools: true
 });

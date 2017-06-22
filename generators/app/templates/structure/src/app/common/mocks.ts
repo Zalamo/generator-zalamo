@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { NgRedux } from '@angular-redux/store';
 import { Apollo } from 'apollo-angular';
-import { Subject } from 'rxjs';
+import { Subject } from 'rxjs/Rx';
 
 /* Stubs */
 import { RouterLinkStubDirective } from './stubs/router-link';

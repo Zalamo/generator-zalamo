@@ -1,6 +1,0 @@
-mutation modifyPost($id: Int!) {
-  upvotePost(id: $id) {
-    id
-    votes
-  }
-}

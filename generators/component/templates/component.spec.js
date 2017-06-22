@@ -2,19 +2,12 @@ const { If, type } = require('../../helpers');
 
 module.exports = ({ samples, useActions, useRouter, Module, Name, module, name }) =>
   `/* tslint:disable:no-unused-variable */
-/* 3rd party modules */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';${If(useRouter)`
-
-/* C&C */
-import { RouterLinkStubDirective } from '../../common/mocks';`}${If(useActions)`
-
-/* ${Module} module pieces */
-import { mock${Module}Actions } from '../${module}.spec';
-import { ${Module}Actions } from '../${module}.actions';`}
-
-/* ${Name} component */
+import { RouterLinkStubDirective } from '../../../common/mocks';`}${If(useActions)`
+import { mock${Module}Actions } from '../../${module}.spec';
+import { ${Module}Actions } from '../../${module}.actions';`}
 import { ${Module}${Name}Component } from './${name}.component';
 
 describe('${Module}', () => {

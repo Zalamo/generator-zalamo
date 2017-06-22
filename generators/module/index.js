@@ -12,6 +12,7 @@ module.exports = class extends ModuleUpdater {
       files: [
         'actions',
         'index',
+        'queries',
         'reducer',
         'router',
         'spec'
@@ -38,10 +39,10 @@ module.exports = class extends ModuleUpdater {
   writing() {
     super.writing();
     const prefix = this.options.unprefixed ? '' : '+';
-    this.fs.copy(
-      join(this.templatePath('queries'), '**'),
-      this.destinationPath(`src/app/${prefix}${_.kebabCase(this.options.Name)}/queries`)
-    );
+//    this.fs.copy(
+//      join(this.templatePath('queries'), '**'),
+//      this.destinationPath(`src/app/${prefix}${_.kebabCase(this.options.Name)}/queries`)
+//    );
     this._updateModule();
     if (this.props.registerReducer) {
       this._updateStore();

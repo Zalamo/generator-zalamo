@@ -1,19 +1,12 @@
 const _ = require('lodash');
 const { If, type } = require('../../helpers');
-module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module, description }) =>
-  `/* 3rd party modules */
-import { Component, ChangeDetectionStrategy, ViewEncapsulation${If(samples)`, OnInit`} } from '@angular/core';${If(useRouter)`
+module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module, description, addRoute }) =>
+  `import { Component, ChangeDetectionStrategy, ViewEncapsulation${If(samples)`, OnInit`} } from '@angular/core';${If(useRouter)`
 import { ActivatedRoute } from '@angular/router';`}${If(samples)`${If(useRedux)`
 import { select } from '@angular-redux/store';`}
-import { Observable } from 'rxjs';`}${If(useActions)`${If(samples)`
-
-/* C&C Modules */
+import { Observable } from 'rxjs/Rx';`}${If(useActions)`${If(samples)`
 import { AliveState } from '../../common';`}
-
-/* ${Module} module pieces */
-import { ${Module}Actions } from '../${module}.actions';`}${If(samples)`
-
-/* Types */
+import { ${Module}Actions } from '../../${module}.actions';`}${If(samples)`
 import { ${Module} } from '../../../types/graphql';`}
 
 /**
@@ -21,8 +14,8 @@ import { ${Module} } from '../../../types/graphql';`}
  */
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.Emulated,
-  selector: '${module}-${name}-view',
+  encapsulation: ViewEncapsulation.Emulated,${If(!addRoute)`
+  selector: '${module}-${name}-view',`}
   template: \`${If(samples)`
     <h1>Hello ${Module}${Name}View</h1>
     <ul *ngFor="let ${module} of ${module}s$ | async">
@@ -37,7 +30,7 @@ export class ${Module}${Name}View${If(samples && useActions)` extends AliveState
   ${If(useRedux)`@select(['${_.lowerFirst(Module)}', 'current${Module}Id']) `}public current${Module}$: Observable${type('number')};`
       }${If(useActions || useRouter)`
   constructor(${If(useRouter)`private route: ActivatedRoute${If(useActions)`,
-              `}`}${If(useActions)`public actions: ${Module}Actions`}) {${samples && useActions ? `
+              `}`}${If(useActions)`private actions: ${Module}Actions`}) {${samples && useActions ? `
     super();
   ` : '/* */'}}`}${If(samples)`${If(useActions)`
 

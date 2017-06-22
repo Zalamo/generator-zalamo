@@ -1,11 +1,8 @@
 const { If } = require('../../helpers');
 
 module.exports = ({ samples, useActions, Module, Name, module, name, description }) =>
-  `/* 3rd party modules */
-import { Component, ChangeDetectionStrategy, ViewEncapsulation${If(samples)`, Input`} } from '@angular/core';${If(useActions)`
-
-/* ${Module} module pieces */
-import { ${Module}Actions } from '../${module}.actions';`}
+  `import { Component, ChangeDetectionStrategy, ViewEncapsulation${If(samples)`, Input`} } from '@angular/core';${If(useActions)`
+import { ${Module}Actions } from '../../${module}.actions';`}
 
 /**
  * ${description}
@@ -20,6 +17,6 @@ import { ${Module}Actions } from '../${module}.actions';`}
 })
 export class ${Module}${Name}Component {${If(samples)`
   @Input() public me = 'world';`}${If(useActions)`
-  constructor(public actions: ${Module}Actions) {}
+  constructor(private actions: ${Module}Actions) {}
 `}}
 `;

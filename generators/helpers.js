@@ -151,8 +151,9 @@ class ModuleUpdater extends Generator {
       let fileName = file === 'index' ? file : `${name}.${file}`;
       let tpl = require(this.templatePath(file));
 
+      const type = this.type ? `/${this.type}s/` : '/';
       this.fs.write(
-        this.destinationPath(`src/app/${prefix}${module || name}${this.type ? `/${this.type}s/` : '/' }${fileName}.ts`),
+        this.destinationPath(`src/app/${prefix}${module || name}${type}${module && name ? `${name}/` : ''}${fileName}.ts`),
         tpl(Object.assign({ Name, name, Module, module }, this.props))
       );
     });

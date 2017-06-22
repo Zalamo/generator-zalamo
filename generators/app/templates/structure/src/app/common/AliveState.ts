@@ -1,6 +1,6 @@
 /* 3rd party modules */
 import { OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Rx';
 import 'rxjs/operator/takeWhile';
 
 /**

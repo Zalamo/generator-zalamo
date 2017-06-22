@@ -1,24 +1,16 @@
 const { If, type } = require('../../helpers');
 module.exports = ({ samples, useActions, useRedux, useRouter, name, Name, module, Module }) =>
   `/* tslint:disable:no-unused-variable */
-/* 3rd party modules */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';${If(useRouter)`
-import { ActivatedRoute } from '@angular/router';
-
-/* C&C */
-import { RouterLinkStubDirective, mockActivatedRoute${If(useRedux)`, mockNgRedux`} } from '../../common/mocks';`}${If(useActions)`
-
-/* ${Module} module pieces */
-import { mock${Module}Actions } from '../${module}.spec';
-import { ${Module}Actions } from '../${module}.actions';`}
-
-/* ${Name} view */
+import { ActivatedRoute } from '@angular/router';`}${If(useRedux)`
+import { NgRedux } from '@angular-redux/store';`}${If(useRouter)`
+import { RouterLinkStubDirective, mockActivatedRoute${If(useRedux)`, mockNgRedux`} } from '../../../common/mocks';`}${If(useActions)`
+import { mock${Module}Actions } from '../../${module}.spec';
+import { ${Module}Actions } from '../../${module}.actions';`}
 import { ${Module}${Name}View } from './${name}.view';${If(useRedux)`
-
-/* Types */
-import { ${Module}State } from './${module}.reducer';
+import { ${Module}State } from '../../${module}.reducer';
 
 const { ngRedux, mediator } = mockNgRedux${type(`{ ${module}: ${Module}State }`)}({ ${module}: {} });
 `}${If(useRouter)`

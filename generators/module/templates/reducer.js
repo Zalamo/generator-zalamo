@@ -2,15 +2,10 @@ const { If, type } = require('../../helpers');
 const { snakeCase } = require('lodash');
 
 module.exports = ({ samples, description, name, Name }) =>
-  `/* 3rd party modules */
-import { ApolloAction } from 'apollo-client/actions';
+  `import { ApolloAction } from 'apollo-client/actions';
 import { cloneDeep } from 'lodash';
-
-/* C&C */
 import { apolloOperationName } from '../common';
 import { ApolloEvent } from '../core/store';${If(samples)`
-
-/* Types */
 import { ${Name}${If(samples)`/*, GetAll${Name}sQuery, Get${Name}Query, Modify${Name}Mutation*/`} } from '../../types/graphql';`}
 
 /**

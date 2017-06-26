@@ -12,6 +12,7 @@ module.exports = class extends ModuleUpdater {
       files: [
         'actions',
         'index',
+        'public',
         'queries',
         'reducer',
         'router',

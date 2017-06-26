@@ -148,7 +148,7 @@ class ModuleUpdater extends Generator {
     const prefix = this.options.unprefixed ? '' : '+';
 
     this.files.forEach(file => {
-      let fileName = file === 'index' ? file : `${name}.${file}`;
+      let fileName = ['index', 'public'].includes(file) ? file : `${name}.${file}`;
       let tpl = require(this.templatePath(file));
 
       const type = this.type ? `/${this.type}s/` : '/';
